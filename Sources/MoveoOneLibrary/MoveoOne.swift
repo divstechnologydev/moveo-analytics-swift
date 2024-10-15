@@ -8,8 +8,8 @@
 import Foundation
 
 
-final class MoveoOne {
-    static let instance = MoveoOne()
+final class MoveoOne: @unchecked Sendable {
+    static let instance: MoveoOne = MoveoOne()
     
     private var buffer: [MoveoOneEntity] = [MoveoOneEntity]()
     private var token: String
@@ -61,7 +61,7 @@ final class MoveoOne {
         if !self.started {
             self.flushOrRecord(isStopOrStart: true)
             self.started = true
-            var innerContext: String = context + UUID().uuidString
+            let innerContext: String = context + UUID().uuidString
             self.context = innerContext
             self.verifyContext(context: innerContext)
             self.addEventToBuffer(context: innerContext, type: "start", prop: [:], userId: self.userId)

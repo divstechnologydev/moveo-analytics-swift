@@ -13,7 +13,7 @@ protocol MoveoOneServicable {
 }
 
 struct MoveoOneService: MoveoOneHTTPClient, MoveoOneServicable {
-    static var shared = MoveoOneService()
+    static let shared = MoveoOneService()
     
     func storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest) async -> Result<SaveDataResponse, MoveoOneRequestError> {
         return await sendRequest(endpoint: MoveoOneEnpoints.analyticsEvent(parameters: payload.dictionary ?? [String: Any] ()), responseModel: SaveDataResponse.self)
