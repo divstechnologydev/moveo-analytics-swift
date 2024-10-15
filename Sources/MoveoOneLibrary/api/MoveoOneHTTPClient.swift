@@ -36,8 +36,6 @@ extension MoveoOneHTTPClient {
             return .failure(.invalidURL)
         }
         
-        print("URL \(url)")
-        
         var request = URLRequest(url: url)
         request.httpMethod = endpoint.method.rawValue
         request.allHTTPHeaderFields = endpoint.header
@@ -69,16 +67,12 @@ extension MoveoOneHTTPClient {
         }
         
         do {
-            print(request.cURLMoveoOne())
-            
             let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
             
             guard let response = response as? HTTPURLResponse else {
                 return .failure(.noResponse)
             }
-            
-//            print("Response code ", response)
-            
+                        
             switch response.statusCode {
             case 200...299:
                 guard let decodedResponse = try? JSONDecoder().decode(responseModel, from: data) else {
@@ -90,10 +84,8 @@ extension MoveoOneHTTPClient {
             case 401:
                 return .failure(.unauthorized)
             default:
-                print("Response code ", response)
                 return .failure(.unexpectedStatusCode)
             }
-//            return .failure(.noResponse)
         } catch {
             return .failure(.unknown)
         }

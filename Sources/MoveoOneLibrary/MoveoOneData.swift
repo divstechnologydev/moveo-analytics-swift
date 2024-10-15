@@ -7,19 +7,43 @@
 
 import Foundation
 
+
+struct MoveoOneData {
+    let id: String
+    let semanticGroup: String
+    let type: Constants.MoveoOneType
+    let action: Constants.MoveoOneAction
+    let value: Any
+    let metadata: [String: String]
+}
+
 struct MoveoOneEntity: Codable {
     var c: String //context
     var type: String
     var userId: String
     var t: Int
     var prop: [String: String]
+    var meta: [String: String]
+    var sId: String
     
-    init(c: String, type: String, userId: String, t: Int, prop: [String : String]) {
+    init(c: String, type: Constants.MoveoOneEventType, userId: String, t: Int, prop: [String : String], meta: [String: String], sId: String) {
+        self.c = c
+        self.type = type.rawValue
+        self.userId = userId
+        self.t = t
+        self.prop = prop
+        self.meta = meta
+        self.sId = sId
+    }
+    
+    init(c: String, type: String, userId: String, t: Int, prop: [String : String], meta: [String: String], sId: String) {
         self.c = c
         self.type = type
         self.userId = userId
         self.t = t
         self.prop = prop
+        self.meta = meta
+        self.sId = sId
     }
 }
 
