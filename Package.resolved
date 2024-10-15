@@ -1,0 +1,24 @@
+{
+  "originHash" : "7182b9c053bafe1fb35f3b2d9e03891b181acf25fb36d07d07310eeee30a9a15",
+  "pins" : [
+    {
+      "identity" : "gzipswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/1024jp/GzipSwift",
+      "state" : {
+        "revision" : "7a7f17761c76a932662ab77028a4329f67d645a4",
+        "version" : "5.2.0"
+      }
+    },
+    {
+      "identity" : "multipartformdatakit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kuniwak/MultipartFormDataKit.git",
+      "state" : {
+        "revision" : "27bf281a9adfd742fa2fb3318c176dcc7a111599",
+        "version" : "1.0.1"
+      }
+    }
+  ],
+  "version" : 3
+}
