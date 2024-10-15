@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct MoveoOneData {
+public struct MoveoOneData {
     let id: String
     let semanticGroup: String
     let type: Constants.MoveoOneType

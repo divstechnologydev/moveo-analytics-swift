@@ -8,8 +8,8 @@
 import Foundation
 
 
-final class MoveoOne: @unchecked Sendable {
-    static let instance: MoveoOne = MoveoOne()
+public final class MoveoOne: @unchecked Sendable {
+    public static let instance: MoveoOne = MoveoOne()
     
     private var buffer: [MoveoOneEntity] = [MoveoOneEntity]()
     private var token: String
@@ -28,7 +28,7 @@ final class MoveoOne: @unchecked Sendable {
     private let formatter = DateFormatter()
     
     
-    public init() {
+    private init() {
         token = ""
         userId = ""
         formatter.dateFormat = "SSS"
