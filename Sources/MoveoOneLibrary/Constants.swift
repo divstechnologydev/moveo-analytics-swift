@@ -5,18 +5,18 @@
 //  Created by Vladimir Jeftovic on 15.10.24..
 //
 
-struct Constants {
-    enum Environment: String {
+public struct Constants {
+    public enum Environment: String {
         case development
         case production
     }
     
-    enum MoveoOneEventType: String {
+    public enum MoveoOneEventType: String {
         case start_session
         case track
     }
 
-    enum MoveoOneType: String {
+    public enum MoveoOneType: String {
         case button
         case text
         case textEdit
@@ -56,7 +56,7 @@ struct Constants {
         case custom
     }
     
-    enum MoveoOneAction: String {
+    public enum MoveoOneAction: String {
         case click
         case view
         case appear
