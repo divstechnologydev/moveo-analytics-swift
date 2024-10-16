@@ -15,7 +15,7 @@
   - [Obtain API KEY](#5-obtain-api-key)
   - [Use Results](#6-use-results)
 ## Introduction
-Welcome to the official Moveo One Analytics React Native library.
+Welcome to the official Moveo One SwiftUI library.
 
 Moveo One analytics is the user cognitive-behavioral analytics tool.
 moveo-analytics-swift is SDK for Swift UI iOS client apps to use Moveo One tools.
