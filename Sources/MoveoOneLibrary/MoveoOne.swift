@@ -59,6 +59,7 @@ public final class MoveoOne: @unchecked Sendable {
     }
     
     public func start(context: String, metadata: [String: String]?) {
+        log(msg: "start")
         if !self.started {
             self.flushOrRecord(isStopOrStart: true)
             self.started = true
@@ -71,6 +72,7 @@ public final class MoveoOne: @unchecked Sendable {
     }
     
     public func track(context: String, moveoOneData: MoveoOneData) {
+        log(msg: "track")
         var properties: [String: String] = [:]
         properties["sg"] = moveoOneData.semanticGroup
         properties["eID"] = moveoOneData.id
@@ -92,6 +94,7 @@ public final class MoveoOne: @unchecked Sendable {
     }
     
     public func tick (moveoOneData: MoveoOneData) {
+        log(msg: "tick")
         var properties: [String: String] = [:]
         properties["sg"] = moveoOneData.semanticGroup
         properties["eID"] = moveoOneData.id
@@ -162,6 +165,7 @@ public final class MoveoOne: @unchecked Sendable {
     
     private func flush() {
         if !customPush {
+            log(msg: "flush")
             self.clearFlushTimeout()
             if self.buffer.count > 0 {
                 let dataToSend = buffer.map { originalEntity in
@@ -213,11 +217,18 @@ public final class MoveoOne: @unchecked Sendable {
     private actor sendDataActor {
         func sendDataToServer(dataToSend: [MoveoOneEntity]) async {
             let result = await MoveoOneService.shared.storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest(events: dataToSend))
+            switch result {
+            case .success(let response):
+                MoveoOne.instance.log(msg: response)
+            case .failure(let error):
+                MoveoOne.instance.log(msg: error)
+            }
         }
     }
     
     
     private func setFlushTimeout() {
+        log(msg: "setting flush timeout")
         flushTimer = Timer.scheduledTimer(withTimeInterval: TimeInterval(flushInterval), repeats: false) { timer in
             self.flush()
         }
@@ -235,5 +246,11 @@ public final class MoveoOne: @unchecked Sendable {
     
     private func verifyProps(props: [String: String]) {
         
+    }
+    
+    private func log(msg: Any) {
+        if self.logging {
+            print("MoveoOne -> ", msg)
+        }
     }
 }
