@@ -1,4 +1,5 @@
 # moveo-analytics-swift
+
 <div align="center" style="text-align: center">
   <img src="https://github.com/user-attachments/assets/ae163684-fcff-4fa8-b793-63849834c735" height="150"/>
 </div>
@@ -13,7 +14,6 @@
   - [Track Data](#4-track-data)
   - [Obtain API KEY](#5-obtain-api-key)
   - [Use Results](#6-use-results)
-  
 ## Introduction
 Welcome to the official Moveo One Analytics React Native library.
 
