@@ -58,14 +58,14 @@ public final class MoveoOne: @unchecked Sendable {
         return self.customPush
     }
     
-    public func start(context: String, metadata: [String: String]) {
+    public func start(context: String, metadata: [String: String]?) {
         if !self.started {
             self.flushOrRecord(isStopOrStart: true)
             self.started = true
             self.context = context
             self.verifyContext(context: context)
             self.sessionId = "sid_" + UUID().uuidString
-            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata)
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata ?? [:])
             self.flushOrRecord(isStopOrStart: false)
         }
     }
@@ -88,7 +88,7 @@ public final class MoveoOne: @unchecked Sendable {
             properties["eV"] = "-"
         }
 
-        track(context: context, properties: properties, metadata: moveoOneData.metadata)
+        track(context: context, properties: properties, metadata: moveoOneData.metadata ?? [:])
     }
     
     public func tick (moveoOneData: MoveoOneData) {
@@ -108,8 +108,8 @@ public final class MoveoOne: @unchecked Sendable {
         } else {
             properties["eV"] = "-"
         }
-
-        tick(properties: properties, metadata: moveoOneData.metadata)
+        
+        tick(properties: properties, metadata: moveoOneData.metadata ?? [:])
     }
     
     private func track(context: String, properties: [String: String], metadata: [String: String]) {

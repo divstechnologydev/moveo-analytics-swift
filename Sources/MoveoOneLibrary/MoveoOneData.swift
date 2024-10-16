@@ -9,12 +9,12 @@ import Foundation
 
 
 public struct MoveoOneData {
-    let id: String
-    let semanticGroup: String
-    let type: Constants.MoveoOneType
-    let action: Constants.MoveoOneAction
-    let value: Any
-    let metadata: [String: String]
+    public let semanticGroup: String
+    public let id: String
+    public let type: Constants.MoveoOneType
+    public let action: Constants.MoveoOneAction
+    public let value: Any
+    public let metadata: [String: String]?
 }
 
 struct MoveoOneEntity: Codable {
