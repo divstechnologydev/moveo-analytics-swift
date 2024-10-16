@@ -15,6 +15,15 @@ public struct MoveoOneData {
     public let action: Constants.MoveoOneAction
     public let value: Any
     public let metadata: [String: String]?
+    
+    public init(semanticGroup: String, id: String, type: Constants.MoveoOneType, action: Constants.MoveoOneAction, value: Any, metadata: [String : String]?) {
+        self.semanticGroup = semanticGroup
+        self.id = id
+        self.type = type
+        self.action = action
+        self.value = value
+        self.metadata = metadata
+    }
 }
 
 struct MoveoOneEntity: Codable {
