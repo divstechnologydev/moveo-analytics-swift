@@ -69,6 +69,8 @@ extension MoveoOneHTTPClient {
         do {
             let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
             
+            MoveoOne.instance.log(msg: request.cURLMoveoOne())
+            
             guard let response = response as? HTTPURLResponse else {
                 return .failure(.noResponse)
             }

@@ -248,7 +248,7 @@ public final class MoveoOne: @unchecked Sendable {
         
     }
     
-    private func log(msg: Any) {
+    public func log(msg: Any) {
         if self.logging {
             print("MoveoOne -> ", msg)
         }
