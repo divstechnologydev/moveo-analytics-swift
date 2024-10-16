@@ -1,5 +1,5 @@
 # moveo-analytics-swift
-
+![moveo_one_logo](https://github.com/user-attachments/assets/ae163684-fcff-4fa8-b793-63849834c735)
 ####
 ## Table of Contents
 - [Introduction](#introduction)
