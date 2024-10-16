@@ -2,9 +2,10 @@
 <div align="center" style="text-align: center">
   <img src="https://github.com/user-attachments/assets/ae163684-fcff-4fa8-b793-63849834c735" height="150"/>
 </div>
+
 ####
 ## Table of Contents
-- [Introduction](#introduction)
+- [Introduction] (#introduction)
 - [Quick Start Guide](#quick-start-guide)
   - [Add Moveo One Analytics](#1-add-moveo-one-analytics)
   - [Initialize](#2-initialize)
@@ -12,6 +13,7 @@
   - [Track Data](#4-track-data)
   - [Obtain API KEY](#5-obtain-api-key)
   - [Use Results](#6-use-results)
+  
 ## Introduction
 Welcome to the official Moveo One Analytics React Native library.
 
