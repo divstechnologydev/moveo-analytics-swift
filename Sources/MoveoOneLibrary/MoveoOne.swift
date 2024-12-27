@@ -134,7 +134,7 @@ public final class MoveoOne: @unchecked Sendable {
     }
     
     private func tick(properties: [String: String], metadata: [String: String]) {
-        if self.started || self.context == "" {
+        if self.context == "" {
             self.verifyContext(context: context)
             self.start(context: context, metadata: metadata)
         }
