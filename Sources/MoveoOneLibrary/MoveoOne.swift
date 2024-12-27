@@ -115,6 +115,14 @@ public final class MoveoOne: @unchecked Sendable {
         tick(properties: properties, metadata: moveoOneData.metadata ?? [:])
     }
     
+    public func updateSessionMetadata(metadata: [String: String]) {
+        log(msg: "update session metadata")
+        if !self.started {
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata)
+            self.flushOrRecord(isStopOrStart: false)
+        }
+    }
+    
     private func track(context: String, properties: [String: String], metadata: [String: String]) {
         if !self.started {
             self.start(context: context, metadata: metadata)
@@ -132,6 +140,7 @@ public final class MoveoOne: @unchecked Sendable {
         }
         self.verifyProps(props: properties)
         self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.track, prop: properties, userId: self.userId, sessionId: self.sessionId, meta: metadata)
+        self.flushOrRecord(isStopOrStart: false)
     }
     
     
@@ -143,7 +152,6 @@ public final class MoveoOne: @unchecked Sendable {
                 if flushTimer == nil {
                     setFlushTimeout()
                 }
-                
             }
         }
     }
@@ -252,5 +260,13 @@ public final class MoveoOne: @unchecked Sendable {
         if self.logging {
             print("MoveoOne -> ", msg)
         }
+    }
+    
+    public func isStarted() -> Bool {
+        return self.started
+    }
+    
+    public func getContext() -> String {
+        return self.context
     }
 }

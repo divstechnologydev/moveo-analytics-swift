@@ -14,6 +14,7 @@ public struct Constants {
     public enum MoveoOneEventType: String {
         case start_session
         case track
+        case update_metadata
     }
 
     public enum MoveoOneType: String {
@@ -21,6 +22,7 @@ public struct Constants {
         case text
         case textEdit
         case image
+        case images
         case image_scroll_horizontal
         case image_scroll_vertical
         case picker
@@ -44,8 +46,13 @@ public struct Constants {
         case audioPlayer
         case map
         case tabBar
+        case tabBarPage
+        case tabBarPageTitle
+        case tabBarPageSubtitle
         case toolbar
         case alert
+        case alertTitle
+        case alertSubtitle
         case modal
         case toast
         case badge
