@@ -104,6 +104,7 @@ public struct Constants {
         case close
         case expand
         case collapse
+        case edit
         case custom
     }
 }
