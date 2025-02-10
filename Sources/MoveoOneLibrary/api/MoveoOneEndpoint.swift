@@ -35,6 +35,6 @@ extension MoveoOneEndpoint {
     }
 
     var host: String {
-        return "moveo-one-api-web-app.azurewebsites.net"
+        return "api.moveo.one"
     }
 }

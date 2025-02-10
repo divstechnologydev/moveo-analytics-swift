@@ -117,7 +117,7 @@ public final class MoveoOne: @unchecked Sendable {
     
     public func updateSessionMetadata(metadata: [String: String]) {
         log(msg: "update session metadata")
-        if !self.started {
+        if self.started {
             self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata)
             self.flushOrRecord(isStopOrStart: false)
         }
