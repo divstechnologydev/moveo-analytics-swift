@@ -61,81 +61,65 @@ public final class MoveoOne: @unchecked Sendable {
     public func start(context: String, metadata: [String: String]?) {
         log(msg: "start")
         if !self.started {
-            do {
-                self.flushOrRecord(isStopOrStart: true)
-                self.started = true
-                self.context = context
-                self.verifyContext(context: context)
-                self.sessionId = "sid_" + UUID().uuidString
-                self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata ?? [:])
-                self.flushOrRecord(isStopOrStart: false)
-            } catch {
-                log(msg: "error in starting")
-            }
+            self.flushOrRecord(isStopOrStart: true)
+            self.started = true
+            self.context = context
+            self.verifyContext(context: context)
+            self.sessionId = "sid_" + UUID().uuidString
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata ?? [:])
+            self.flushOrRecord(isStopOrStart: false)
         }
     }
     
     public func track(context: String, moveoOneData: MoveoOneData) {
         log(msg: "track")
-        do {
-            var properties: [String: String] = [:]
-            properties["sg"] = moveoOneData.semanticGroup
-            properties["eID"] = moveoOneData.id
-            properties["eA"] = moveoOneData.action.rawValue
-            properties["eT"] = moveoOneData.type.rawValue
-            if let stringValue = moveoOneData.value as? String {
-                properties["eV"] = stringValue
-            } else if let stringArray = moveoOneData.value as? [String] {
-                properties["eV"] = stringArray.joined(separator: ",")
-            } else if let intValue = moveoOneData.value as? Int {
-                properties["eV"] = String(intValue)
-            } else if let doubleValue = moveoOneData.value as? Double {
-                properties["eV"] = String(doubleValue)
-            } else {
-                properties["eV"] = "-"
-            }
-            
-            track(context: context, properties: properties, metadata: moveoOneData.metadata ?? [:])
-        } catch {
-            log(msg: "error in track")
+        var properties: [String: String] = [:]
+        properties["sg"] = moveoOneData.semanticGroup
+        properties["eID"] = moveoOneData.id
+        properties["eA"] = moveoOneData.action.rawValue
+        properties["eT"] = moveoOneData.type.rawValue
+        if let stringValue = moveoOneData.value as? String {
+            properties["eV"] = stringValue
+        } else if let stringArray = moveoOneData.value as? [String] {
+            properties["eV"] = stringArray.joined(separator: ",")
+        } else if let intValue = moveoOneData.value as? Int {
+            properties["eV"] = String(intValue)
+        } else if let doubleValue = moveoOneData.value as? Double {
+            properties["eV"] = String(doubleValue)
+        } else {
+            properties["eV"] = "-"
         }
+
+        track(context: context, properties: properties, metadata: moveoOneData.metadata ?? [:])
     }
     
     public func tick (moveoOneData: MoveoOneData) {
         log(msg: "tick")
-        do {
-            var properties: [String: String] = [:]
-            properties["sg"] = moveoOneData.semanticGroup
-            properties["eID"] = moveoOneData.id
-            properties["eA"] = moveoOneData.action.rawValue
-            properties["eT"] = moveoOneData.type.rawValue
-            if let stringValue = moveoOneData.value as? String {
-                properties["eV"] = stringValue
-            } else if let stringArray = moveoOneData.value as? [String] {
-                properties["eV"] = stringArray.joined(separator: ",")
-            } else if let intValue = moveoOneData.value as? Int {
-                properties["eV"] = String(intValue)
-            } else if let doubleValue = moveoOneData.value as? Double {
-                properties["eV"] = String(doubleValue)
-            } else {
-                properties["eV"] = "-"
-            }
-            
-            tick(properties: properties, metadata: moveoOneData.metadata ?? [:])
-        } catch {
-            log(msg: "error in tick")
+        var properties: [String: String] = [:]
+        properties["sg"] = moveoOneData.semanticGroup
+        properties["eID"] = moveoOneData.id
+        properties["eA"] = moveoOneData.action.rawValue
+        properties["eT"] = moveoOneData.type.rawValue
+        if let stringValue = moveoOneData.value as? String {
+            properties["eV"] = stringValue
+        } else if let stringArray = moveoOneData.value as? [String] {
+            properties["eV"] = stringArray.joined(separator: ",")
+        } else if let intValue = moveoOneData.value as? Int {
+            properties["eV"] = String(intValue)
+        } else if let doubleValue = moveoOneData.value as? Double {
+            properties["eV"] = String(doubleValue)
+        } else {
+            properties["eV"] = "-"
         }
+        
+        tick(properties: properties, metadata: moveoOneData.metadata ?? [:])
     }
     
     public func updateSessionMetadata(metadata: [String: String]) {
         log(msg: "update session metadata")
-        do {
-            if self.started {
-                self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata)
-                self.flushOrRecord(isStopOrStart: false)
-            }
-        } catch {
-            log(msg: "error in updateSessionMetadata")
+        if self.started {
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata)
+            self.flushOrRecord(isStopOrStart: false)
         }
     }
     
@@ -190,30 +174,26 @@ public final class MoveoOne: @unchecked Sendable {
     private func flush() {
         if !customPush {
             log(msg: "flush")
-            do {
-                self.clearFlushTimeout()
-                if self.buffer.count > 0 {
-                    let dataToSend = buffer.map { originalEntity in
-                        return MoveoOneEntity(
-                            c: originalEntity.c,
-                            type: originalEntity.type,
-                            userId: originalEntity.userId,
-                            t: originalEntity.t,
-                            prop: originalEntity.prop,
-                            meta: originalEntity.meta,
-                            sId: originalEntity.sId
-                        )
-                    }
-                    
-                    let actor = sendDataActor()
-                    Task {
-                        await actor.sendDataToServer(dataToSend: dataToSend)
-                    }
-                    self.buffer.removeAll()
-                    
+            self.clearFlushTimeout()
+            if self.buffer.count > 0 {
+                let dataToSend = buffer.map { originalEntity in
+                    return MoveoOneEntity(
+                        c: originalEntity.c,
+                        type: originalEntity.type,
+                        userId: originalEntity.userId,
+                        t: originalEntity.t,
+                        prop: originalEntity.prop,
+                        meta: originalEntity.meta,
+                        sId: originalEntity.sId
+                    )
                 }
-            } catch {
-                log(msg: "error in flush")
+                
+                let actor = sendDataActor()
+                Task {
+                    await actor.sendDataToServer(dataToSend: dataToSend)
+                }
+                self.buffer.removeAll()
+                
             }
         }
     }
