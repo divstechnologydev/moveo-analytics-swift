@@ -139,7 +139,7 @@ struct MoveoTextFieldStyle: TextFieldStyle {
 @main
 struct SimpleExampleAppApp: App {
     init() {
-        MoveoOne.instance.initialize(token: "NNrQptL3xr9RBTNe")
+        MoveoOne.instance.initialize(token: "YOUR_API_KEY")
         MoveoOne.instance.identify(userId: "demo_user_123")
         MoveoOne.instance.setLogging(enabled: true)
         MoveoOne.instance.setFlushInterval(interval: 5)
