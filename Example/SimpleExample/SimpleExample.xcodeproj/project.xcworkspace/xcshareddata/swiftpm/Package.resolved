@@ -1,0 +1,33 @@
+{
+  "originHash" : "75d456873505f70c81fbdc94818ce68906effa84a76d7673add8e42699782794",
+  "pins" : [
+    {
+      "identity" : "gzipswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/1024jp/GzipSwift",
+      "state" : {
+        "revision" : "7a7f17761c76a932662ab77028a4329f67d645a4",
+        "version" : "5.2.0"
+      }
+    },
+    {
+      "identity" : "moveo-analytics-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/divstechnologydev/moveo-analytics-swift",
+      "state" : {
+        "revision" : "11dca0085a5e27fe3e8641ca50f08df354ac8ff7",
+        "version" : "1.0.14"
+      }
+    },
+    {
+      "identity" : "multipartformdatakit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kuniwak/MultipartFormDataKit.git",
+      "state" : {
+        "revision" : "27bf281a9adfd742fa2fb3318c176dcc7a111599",
+        "version" : "1.0.1"
+      }
+    }
+  ],
+  "version" : 3
+}
