@@ -57,53 +57,15 @@ struct MainContentView: View {
     }
     
     private func trackParagraphImpression() {
-        MoveoOne.instance.tick(moveoOneData: MoveoOneData(
-            semanticGroup: "content_interactions",
-            id: "intro_paragraph",
-            type: .text,
-            action: .view,
-            value: "demo_description",
-            metadata: [
-                "screen": "main_screen",
-                "interaction_type": "impression",
-                "app_version": "1.0",
-                "platform": "iOS"
-            ]
-        ))
+      
     }
     
     private func handleButtonPress(_ buttonName: String) {
-        MoveoOne.instance.track(
-            context: "main_screen",
-            moveoOneData: MoveoOneData(
-                semanticGroup: "user_interactions",
-                id: "main_button",
-                type: .button,
-                action: .click,
-                value: "primary_action",
-                metadata: [
-                    "source": "home_screen",
-                    "button": buttonName
-                ]
-            )
-        )
+       
     }
     
     private func handleInputSubmit() {
-        MoveoOne.instance.track(
-            context: "main_screen",
-            moveoOneData: MoveoOneData(
-                semanticGroup: "user_interactions",
-                id: "main_input",
-                type: .textEdit,
-                action: .input,
-                value: "text_entered",
-                metadata: [
-                    "source": "home_screen",
-                    "input_length": String(inputText.count)
-                ]
-            )
-        )
+        
     }
 }
 
@@ -139,16 +101,7 @@ struct MoveoTextFieldStyle: TextFieldStyle {
 @main
 struct SimpleExampleAppApp: App {
     init() {
-        MoveoOne.instance.initialize(token: "YOUR_API_KEY")
-        MoveoOne.instance.identify(userId: "demo_user_123")
-        MoveoOne.instance.setLogging(enabled: true)
-        MoveoOne.instance.setFlushInterval(interval: 5)
         
-        // Start session with context
-        MoveoOne.instance.start(
-            context: "main_screen",
-            metadata: ["app_version": "1.0", "platform": "iOS"]
-        )
     }
     
     var body: some Scene {
