@@ -61,7 +61,7 @@ struct MainContentView: View {
     }
     
     private func handleButtonPress(_ buttonName: String) {
-       
+    
     }
     
     private func handleInputSubmit() {
