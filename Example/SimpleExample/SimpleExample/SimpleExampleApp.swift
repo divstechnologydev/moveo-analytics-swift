@@ -2,58 +2,68 @@ import SwiftUI
 
 struct MainContentView: View {
     @State private var inputText: String = ""
+    @State private var navigateToSecondScreen = false  // New state variable for navigation
     
     var body: some View {
-        ScrollView {
-            VStack {
-                Text("Generic App")
-                    .font(.system(size: 32, weight: .bold))
-                    .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.36))
-                    .padding(.top, 60)
-                    .padding(.bottom, 40)
-                
-                // Content Container
+        NavigationView {  // Embed in a NavigationView
+            ScrollView {
                 VStack {
-                    Text("This is a generic SwiftUI app made for demo purposes.")
-                        .font(.system(size: 16))
-                        .foregroundColor(Color(red: 0.29, green: 0.33, blue: 0.41))
-                        .lineSpacing(6)
-                        .multilineTextAlignment(.center)
-                        .padding(.bottom, 30)
-                        .onAppear {
-                            trackParagraphImpression()
-                        }
+                    Text("Generic App")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.36))
+                        .padding(.top, 60)
+                        .padding(.bottom, 40)
                     
-                    // Buttons
-                    VStack(spacing: 16) {
-                        Button("Button One") {
-                            handleButtonPress("Button One")
-                        }
-                        .buttonStyle(PrimaryButtonStyle())
+                    // Content Container
+                    VStack {
+                        Text("This is a generic SwiftUI app made for demo purposes.")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(red: 0.29, green: 0.33, blue: 0.41))
+                            .lineSpacing(6)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom, 30)
+                            .onAppear {
+                                trackParagraphImpression()
+                            }
                         
-                        Button("Button Two") {
-                            handleButtonPress("Button Two")
+                        // Buttons
+                        VStack(spacing: 16) {
+                            Button("Button One") {
+                                // Set state to trigger navigation to second screen
+                                navigateToSecondScreen = true
+                            }
+                            .buttonStyle(PrimaryButtonStyle())
+                            
+                            Button("Button Two") {
+                                handleButtonPress("Button Two")
+                            }
+                            .buttonStyle(SecondaryButtonStyle())
                         }
-                        .buttonStyle(SecondaryButtonStyle())
+                        .padding(.bottom, 20)
+                        
+                        // Text Field
+                        TextField("Type something...", text: $inputText)
+                            .textFieldStyle(GenericTextFieldStyle())
+                            .onSubmit {
+                                handleInputSubmit()
+                            }
                     }
-                    .padding(.bottom, 20)
-                    
-                    // Text Field
-                    TextField("Type something...", text: $inputText)
-                        .textFieldStyle(GenericTextFieldStyle())
-                        .onSubmit {
-                            handleInputSubmit()
-                        }
+                    .padding(25)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .shadow(color: Color(red: 0.17, green: 0.42, blue: 0.69).opacity(0.1), radius: 10, y: 4)
+                    .frame(maxWidth: 350)
                 }
-                .padding(25)
-                .background(Color.white)
-                .cornerRadius(20)
-                .shadow(color: Color(red: 0.17, green: 0.42, blue: 0.69).opacity(0.1), radius: 10, y: 4)
-                .frame(maxWidth: 350)
+                .padding(.horizontal, 20)
+                
+                // Hidden NavigationLink that triggers on state change
+                NavigationLink(destination: SecondScreen(), isActive: $navigateToSecondScreen) {
+                    EmptyView()
+                }
             }
-            .padding(.horizontal, 20)
+            .background(Color(red: 0.94, green: 0.97, blue: 0.98))
+            .navigationBarHidden(true)
         }
-        .background(Color(red: 0.94, green: 0.97, blue: 0.98))
     }
     
     private func trackParagraphImpression() {
