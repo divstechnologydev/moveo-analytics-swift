@@ -67,15 +67,12 @@ struct MainContentView: View {
     }
     
     private func trackParagraphImpression() {
-        print("Paragraph viewed")
     }
     
     private func handleButtonPress(_ buttonName: String) {
-        print("\(buttonName) pressed")
     }
     
     private func handleInputSubmit() {
-        print("Input submitted: \(inputText)")
     }
 }
 
