@@ -70,6 +70,7 @@ struct MainContentView: View {
     }
     
     private func handleButtonPress(_ buttonName: String) {
+            print("\(buttonName) pressed")
     }
     
     private func handleInputSubmit() {
