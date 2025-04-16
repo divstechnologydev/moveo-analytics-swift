@@ -6,6 +6,9 @@
 //
 
 public struct Constants {
+    
+    public static let libVersion = "1.0.16"
+
     public enum Environment: String {
         case development
         case production
