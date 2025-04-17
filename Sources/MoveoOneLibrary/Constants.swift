@@ -6,6 +6,9 @@
 //
 
 public struct Constants {
+    
+    public static let libVersion = "1.0.16"
+
     public enum Environment: String {
         case development
         case production
@@ -107,4 +110,20 @@ public struct Constants {
         case edit
         case custom
     }
+    
+   
+}
+
+public extension Constants.MoveoOneAction {
+  var normalized: Constants.MoveoOneAction {
+    switch self {
+    case .click: return .tap
+    case .view:  return .appear
+    case .load: return .appear
+    case .open: return .appear
+    case .close: return .disappear
+    case .unload: return .disappear
+    default:      return self
+    }
+  }
 }

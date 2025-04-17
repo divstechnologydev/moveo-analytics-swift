@@ -66,7 +66,11 @@ public final class MoveoOne: @unchecked Sendable {
             self.context = context
             self.verifyContext(context: context)
             self.sessionId = "sid_" + UUID().uuidString
-            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata ?? [:])
+            
+            var updatedMetadata = metadata ?? [:]
+            updatedMetadata["lib_version"] = Constants.libVersion
+            
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: updatedMetadata)
             self.flushOrRecord(isStopOrStart: false)
         }
     }
@@ -76,7 +80,8 @@ public final class MoveoOne: @unchecked Sendable {
         var properties: [String: String] = [:]
         properties["sg"] = moveoOneData.semanticGroup
         properties["eID"] = moveoOneData.id
-        properties["eA"] = moveoOneData.action.rawValue
+        //properties["eA"] = moveoOneData.action.rawValue
+        properties["eA"] = moveoOneData.action.normalized.rawValue
         properties["eT"] = moveoOneData.type.rawValue
         if let stringValue = moveoOneData.value as? String {
             properties["eV"] = stringValue
@@ -98,7 +103,9 @@ public final class MoveoOne: @unchecked Sendable {
         var properties: [String: String] = [:]
         properties["sg"] = moveoOneData.semanticGroup
         properties["eID"] = moveoOneData.id
-        properties["eA"] = moveoOneData.action.rawValue
+        //properties["eA"] = moveoOneData.action.rawValue
+        properties["eA"] = moveoOneData.action.normalized.rawValue
+
         properties["eT"] = moveoOneData.type.rawValue
         if let stringValue = moveoOneData.value as? String {
             properties["eV"] = stringValue
