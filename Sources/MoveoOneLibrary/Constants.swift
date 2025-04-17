@@ -110,4 +110,16 @@ public struct Constants {
         case edit
         case custom
     }
+    
+   
+}
+
+public extension Constants.MoveoOneAction {
+  var normalized: Constants.MoveoOneAction {
+    switch self {
+    case .click: return .tap
+    case .view:  return .appear
+    default:      return self
+    }
+  }
 }

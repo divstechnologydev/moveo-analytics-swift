@@ -80,7 +80,8 @@ public final class MoveoOne: @unchecked Sendable {
         var properties: [String: String] = [:]
         properties["sg"] = moveoOneData.semanticGroup
         properties["eID"] = moveoOneData.id
-        properties["eA"] = moveoOneData.action.rawValue
+        //properties["eA"] = moveoOneData.action.rawValue
+        properties["eA"] = moveoOneData.action.normalized.rawValue
         properties["eT"] = moveoOneData.type.rawValue
         if let stringValue = moveoOneData.value as? String {
             properties["eV"] = stringValue
@@ -102,7 +103,9 @@ public final class MoveoOne: @unchecked Sendable {
         var properties: [String: String] = [:]
         properties["sg"] = moveoOneData.semanticGroup
         properties["eID"] = moveoOneData.id
-        properties["eA"] = moveoOneData.action.rawValue
+        //properties["eA"] = moveoOneData.action.rawValue
+        properties["eA"] = moveoOneData.action.normalized.rawValue
+
         properties["eT"] = moveoOneData.type.rawValue
         if let stringValue = moveoOneData.value as? String {
             properties["eV"] = stringValue
