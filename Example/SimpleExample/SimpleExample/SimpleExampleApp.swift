@@ -31,6 +31,31 @@ struct MainContentView: View {
                             Button("Button One") {
                                 handleButtonPress("Button One")
                             }
+                            .onAppear {
+                                        MoveoOne.instance.tick(
+                                            moveoOneData: MoveoOneData(
+                                                semanticGroup: content_interactions,
+                                                id: "main_button",
+                                                type: .button,
+                                                action: .appear,
+                                                value: "Button One",
+                                                metadata: [:]
+                                            )
+                                        )
+                                    }
+                            .onDisappear {
+                                        MoveoOne.instance.tick(
+                                            moveoOneData: MoveoOneData(
+                                                semanticGroup: content_interactions,
+                                                id: "main_button",
+                                                type: .button,
+                                                action: .disappear,
+                                                value: "Button One",
+                                                metadata: [:]
+                                            )
+                                        )
+                                    }
+
                             .buttonStyle(MoveoButtonStyle(primary: true))
                             
                             Button("Button Two") {

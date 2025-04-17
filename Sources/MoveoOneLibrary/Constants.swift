@@ -119,6 +119,10 @@ public extension Constants.MoveoOneAction {
     switch self {
     case .click: return .tap
     case .view:  return .appear
+    case .load: return .appear
+    case .open: return .appear
+    case .close: return .disappear
+    case .unload: return .disappear
     default:      return self
     }
   }
