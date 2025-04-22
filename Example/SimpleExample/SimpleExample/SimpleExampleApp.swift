@@ -1,6 +1,10 @@
 import SwiftUI
 
+import SwiftUI
+import MoveoOneLibrary
+
 struct MainContentView: View {
+    private let SEMANTIC_GROUP = "main_screen"
     @State private var inputText: String = ""
     @State private var navigateToSecondScreen = false  // New state variable for navigation
     
@@ -13,6 +17,30 @@ struct MainContentView: View {
                         .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.36))
                         .padding(.top, 60)
                         .padding(.bottom, 40)
+                        .onAppear {
+                            MoveoOne.instance.tick(
+                                moveoOneData: MoveoOneData(
+                                    semanticGroup: SEMANTIC_GROUP,
+                                    id: "main_title_text",
+                                    type: .text,
+                                    action: .appear,
+                                    value: "Generic App",
+                                    metadata: [:]
+                                )
+                            )
+                        }
+                        .onDisappear {
+                            MoveoOne.instance.tick(
+                                moveoOneData: MoveoOneData(
+                                    semanticGroup: SEMANTIC_GROUP,
+                                    id: "main_title_text",
+                                    type: .text,
+                                    action: .disappear,
+                                    value: "Generic App",
+                                    metadata: [:]
+                                )
+                            )
+                        }
                     
                     // Content Container
                     VStack {
@@ -23,28 +51,151 @@ struct MainContentView: View {
                             .multilineTextAlignment(.center)
                             .padding(.bottom, 30)
                             .onAppear {
-                                trackParagraphImpression()
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_paragraph_text",
+                                        type: .text,
+                                        action: .appear,
+                                        value: "This is a generic SwiftUI app made for demo purposes.",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_paragraph_text",
+                                        type: .text,
+                                        action: .disappear,
+                                        value: "This is a generic SwiftUI app made for demo purposes.",
+                                        metadata: [:]
+                                    )
+                                )
                             }
                         
                         // Buttons
                         VStack(spacing: 16) {
                             Button("Button One") {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_one",
+                                        type: .button,
+                                        action: .tap,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
                                 // Set state to trigger navigation to second screen
                                 navigateToSecondScreen = true
                             }
                             .buttonStyle(PrimaryButtonStyle())
+                            .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_one",
+                                        type: .button,
+                                        action: .appear,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_one",
+                                        type: .button,
+                                        action: .disappear,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
                             
                             Button("Button Two") {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_two",
+                                        type: .button,
+                                        action: .tap,
+                                        value: "Button Two",
+                                        metadata: [:]
+                                    )
+                                )
                                 handleButtonPress("Button Two")
                             }
                             .buttonStyle(SecondaryButtonStyle())
+                            .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_two",
+                                        type: .button,
+                                        action: .appear,
+                                        value: "Button Two",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_two",
+                                        type: .button,
+                                        action: .disappear,
+                                        value: "Button Two",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
                         }
                         .padding(.bottom, 20)
                         
                         // Text Field
                         TextField("Type something...", text: $inputText)
                             .textFieldStyle(GenericTextFieldStyle())
+                            .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_textfield",
+                                        type: .textEdit,
+                                        action: .appear,
+                                        value: "Type something...",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_textfield",
+                                        type: .textEdit,
+                                        action: .disappear,
+                                        value: "Type something...",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
                             .onSubmit {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_textfield",
+                                        type: .textEdit,
+                                        action: .submit,
+                                        value: inputText,
+                                        metadata: [:]
+                                    )
+                                )
                                 handleInputSubmit()
                             }
                     }
@@ -63,6 +214,54 @@ struct MainContentView: View {
             }
             .background(Color(red: 0.94, green: 0.97, blue: 0.98))
             .navigationBarHidden(true)
+            .onAppear {
+                MoveoOne.instance.tick(
+                    moveoOneData: MoveoOneData(
+                        semanticGroup: SEMANTIC_GROUP,
+                        id: "main_scrollview",
+                        type: .scrollView,
+                        action: .appear,
+                        value: "Main ScrollView",
+                        metadata: [:]
+                    )
+                )
+            }
+            .onDisappear {
+                MoveoOne.instance.tick(
+                    moveoOneData: MoveoOneData(
+                        semanticGroup: SEMANTIC_GROUP,
+                        id: "main_scrollview",
+                        type: .scrollView,
+                        action: .disappear,
+                        value: "Main ScrollView",
+                        metadata: [:]
+                    )
+                )
+            }
+        }
+        .onAppear {
+            MoveoOne.instance.tick(
+                moveoOneData: MoveoOneData(
+                    semanticGroup: SEMANTIC_GROUP,
+                    id: "main_screen_view",
+                    type: .custom,
+                    action: .appear,
+                    value: "Main Screen View",
+                    metadata: [:]
+                )
+            )
+        }
+        .onDisappear {
+            MoveoOne.instance.tick(
+                moveoOneData: MoveoOneData(
+                    semanticGroup: SEMANTIC_GROUP,
+                    id: "main_screen_view",
+                    type: .custom,
+                    action: .disappear,
+                    value: "Main Screen View",
+                    metadata: [:]
+                )
+            )
         }
     }
     
@@ -119,8 +318,17 @@ struct GenericTextFieldStyle: TextFieldStyle {
     }
 }
 
+import SwiftUI
+import MoveoOneLibrary
+
 @main
 struct GenericApp: App {
+    init() {
+        MoveoOne.instance.initialize(token: "YOUR_SDK_TOKEN")
+        MoveoOne.instance.start(context: "app_launch")
+        MoveoOne.instance.setLogging(enabled: true)
+        MoveoOne.instance.setFlushInterval(interval: 10)
+    }
     var body: some Scene {
         WindowGroup {
             MainContentView()
