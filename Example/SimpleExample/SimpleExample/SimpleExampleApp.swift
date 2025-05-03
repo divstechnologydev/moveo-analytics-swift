@@ -1,8 +1,12 @@
 import MoveoOneLibrary
 import SwiftUI
 
+import SwiftUI
+import MoveoOneLibrary
+
 struct MainContentView: View {
     @State private var inputText: String = ""
+    private let SEMANTIC_GROUP = "content_view"
     
     var body: some View {
         GeometryReader { geometry in
@@ -13,6 +17,30 @@ struct MainContentView: View {
                         .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.36))
                         .padding(.top, 60)
                         .padding(.bottom, 40)
+                        .onAppear {
+                            MoveoOne.instance.tick(
+                                moveoOneData: MoveoOneData(
+                                    semanticGroup: SEMANTIC_GROUP,
+                                    id: "main_title_text",
+                                    type: .text,
+                                    action: .appear,
+                                    value: "Moveo One",
+                                    metadata: [:]
+                                )
+                            )
+                        }
+                        .onDisappear {
+                            MoveoOne.instance.tick(
+                                moveoOneData: MoveoOneData(
+                                    semanticGroup: SEMANTIC_GROUP,
+                                    id: "main_title_text",
+                                    type: .text,
+                                    action: .disappear,
+                                    value: "Moveo One",
+                                    metadata: [:]
+                                )
+                            )
+                        }
                     
                     // Content Container
                     VStack {
@@ -23,43 +51,108 @@ struct MainContentView: View {
                             .multilineTextAlignment(.center)
                             .padding(.bottom, 30)
                             .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "intro_paragraph",
+                                        type: .text,
+                                        action: .appear,
+                                        value: "This is an example SwiftUI app made for demo purposes.",
+                                        metadata: [:]
+                                    )
+                                )
                                 trackParagraphImpression()
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "intro_paragraph",
+                                        type: .text,
+                                        action: .disappear,
+                                        value: "This is an example SwiftUI app made for demo purposes.",
+                                        metadata: [:]
+                                    )
+                                )
                             }
                         
                         // Buttons
                         VStack(spacing: 16) {
                             Button("Button One") {
                                 handleButtonPress("Button One")
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_one",
+                                        type: .button,
+                                        action: .tap,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
                             }
                             .onAppear {
-                                        MoveoOne.instance.tick(
-                                            moveoOneData: MoveoOneData(
-                                                semanticGroup: content_interactions,
-                                                id: "main_button",
-                                                type: .button,
-                                                action: .appear,
-                                                value: "Button One",
-                                                metadata: [:]
-                                            )
-                                        )
-                                    }
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_one",
+                                        type: .button,
+                                        action: .appear,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
                             .onDisappear {
-                                        MoveoOne.instance.tick(
-                                            moveoOneData: MoveoOneData(
-                                                semanticGroup: content_interactions,
-                                                id: "main_button",
-                                                type: .button,
-                                                action: .disappear,
-                                                value: "Button One",
-                                                metadata: [:]
-                                            )
-                                        )
-                                    }
-
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_one",
+                                        type: .button,
+                                        action: .disappear,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
                             .buttonStyle(MoveoButtonStyle(primary: true))
                             
                             Button("Button Two") {
                                 handleButtonPress("Button Two")
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_two",
+                                        type: .button,
+                                        action: .tap,
+                                        value: "Button Two",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_two",
+                                        type: .button,
+                                        action: .appear,
+                                        value: "Button Two",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "button_two",
+                                        type: .button,
+                                        action: .disappear,
+                                        value: "Button Two",
+                                        metadata: [:]
+                                    )
+                                )
                             }
                             .buttonStyle(MoveoButtonStyle(primary: false))
                         }
@@ -68,7 +161,43 @@ struct MainContentView: View {
                         // Text Field
                         TextField("Type something...", text: $inputText)
                             .textFieldStyle(MoveoTextFieldStyle())
-                            .onSubmit(handleInputSubmit)
+                            .onSubmit {
+                                handleInputSubmit()
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_input",
+                                        type: .textEdit,
+                                        action: .input,
+                                        value: inputText,
+                                        metadata: ["input_length": String(inputText.count)]
+                                    )
+                                )
+                            }
+                            .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_input",
+                                        type: .textEdit,
+                                        action: .appear,
+                                        value: "Type something...",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: SEMANTIC_GROUP,
+                                        id: "main_input",
+                                        type: .textEdit,
+                                        action: .disappear,
+                                        value: "Type something...",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
                     }
                     .padding(25)
                     .background(Color.white)
@@ -78,12 +207,60 @@ struct MainContentView: View {
                 }
             }
             .background(Color(red: 0.94, green: 0.97, blue: 0.98))
+            .onAppear {
+                MoveoOne.instance.tick(
+                    moveoOneData: MoveoOneData(
+                        semanticGroup: SEMANTIC_GROUP,
+                        id: "main_scrollview",
+                        type: .scrollView,
+                        action: .appear,
+                        value: "Main ScrollView",
+                        metadata: [:]
+                    )
+                )
+            }
+            .onDisappear {
+                MoveoOne.instance.tick(
+                    moveoOneData: MoveoOneData(
+                        semanticGroup: SEMANTIC_GROUP,
+                        id: "main_scrollview",
+                        type: .scrollView,
+                        action: .disappear,
+                        value: "Main ScrollView",
+                        metadata: [:]
+                    )
+                )
+            }
+        }
+        .onAppear {
+            MoveoOne.instance.tick(
+                moveoOneData: MoveoOneData(
+                    semanticGroup: SEMANTIC_GROUP,
+                    id: "main_screen",
+                    type: .custom,
+                    action: .appear,
+                    value: "MainContentView Screen",
+                    metadata: [:]
+                )
+            )
+        }
+        .onDisappear {
+            MoveoOne.instance.tick(
+                moveoOneData: MoveoOneData(
+                    semanticGroup: SEMANTIC_GROUP,
+                    id: "main_screen",
+                    type: .custom,
+                    action: .disappear,
+                    value: "MainContentView Screen",
+                    metadata: [:]
+                )
+            )
         }
     }
     
     private func trackParagraphImpression() {
         MoveoOne.instance.tick(moveoOneData: MoveoOneData(
-            semanticGroup: "content_interactions",
+            semanticGroup: SEMANTIC_GROUP,
             id: "intro_paragraph",
             type: .text,
             action: .view,
@@ -101,11 +278,11 @@ struct MainContentView: View {
         MoveoOne.instance.track(
             context: "main_screen",
             moveoOneData: MoveoOneData(
-                semanticGroup: "user_interactions",
-                id: "main_button",
+                semanticGroup: SEMANTIC_GROUP,
+                id: buttonName == "Button One" ? "button_one" : "button_two",
                 type: .button,
-                action: .click,
-                value: "primary_action",
+                action: .tap,
+                value: buttonName,
                 metadata: [
                     "source": "home_screen",
                     "button": buttonName
@@ -118,7 +295,7 @@ struct MainContentView: View {
         MoveoOne.instance.track(
             context: "main_screen",
             moveoOneData: MoveoOneData(
-                semanticGroup: "user_interactions",
+                semanticGroup: SEMANTIC_GROUP,
                 id: "main_input",
                 type: .textEdit,
                 action: .input,
@@ -161,6 +338,9 @@ struct MoveoTextFieldStyle: TextFieldStyle {
     }
 }
 
+import SwiftUI
+import MoveoOneLibrary
+
 @main
 struct SimpleExampleAppApp: App {
     init() {
@@ -168,14 +348,12 @@ struct SimpleExampleAppApp: App {
         MoveoOne.instance.identify(userId: "demo_user_123")
         MoveoOne.instance.setLogging(enabled: true)
         MoveoOne.instance.setFlushInterval(interval: 5)
-        
         // Start session with context
         MoveoOne.instance.start(
-            context: "main_screen",
+            context: "content_view",
             metadata: ["app_version": "1.0", "platform": "iOS"]
         )
     }
-    
     var body: some Scene {
         WindowGroup {
             MainContentView()
