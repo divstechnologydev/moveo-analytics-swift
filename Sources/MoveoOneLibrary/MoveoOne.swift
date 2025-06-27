@@ -130,6 +130,14 @@ public final class MoveoOne: @unchecked Sendable {
         }
     }
     
+    public func updateAdditionalMetadata(additionalMeta: [String: String]) {
+        log(msg: "update additional metadata")
+        if self.started {
+            self.addEventToBufferWithAdditionalMeta(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: [:], additionalMeta: additionalMeta)
+            self.flushOrRecord(isStopOrStart: false)
+        }
+    }
+    
     private func track(context: String, properties: [String: String], metadata: [String: String]) {
         if !self.started {
             self.start(context: context, metadata: metadata)
@@ -178,6 +186,22 @@ public final class MoveoOne: @unchecked Sendable {
         )
     }
     
+    private func addEventToBufferWithAdditionalMeta(context: String, type: Constants.MoveoOneEventType, prop: [String: String], userId: String, sessionId: String, meta: [String: String], additionalMeta: [String: String]) {
+        let now = Date.now
+        self.buffer.append(
+            MoveoOneEntity(
+                c: context,
+                type: type,
+                userId: userId,
+                t: Int(now.timeIntervalSince1970)*1000 + (Int(formatter.string(from: now)) ?? 0),
+                prop: prop,
+                meta: meta,
+                sId: sessionId,
+                additionalMeta: additionalMeta  // You'll need to add this property to MoveoOneEntity
+            )
+        )
+    }
+    
     private func flush() {
         if !customPush {
             log(msg: "flush")
@@ -191,7 +215,8 @@ public final class MoveoOne: @unchecked Sendable {
                         t: originalEntity.t,
                         prop: originalEntity.prop,
                         meta: originalEntity.meta,
-                        sId: originalEntity.sId
+                        sId: originalEntity.sId,
+                        additionalMeta: originalEntity.additionalMeta
                     )
                 }
                 
@@ -216,7 +241,8 @@ public final class MoveoOne: @unchecked Sendable {
                         t: originalEntity.t,
                         prop: originalEntity.prop,
                         meta: originalEntity.meta,
-                        sId: originalEntity.sId
+                        sId: originalEntity.sId,
+                        additionalMeta: originalEntity.additionalMeta
                     )
                 }
                 self.buffer.removeAll()
