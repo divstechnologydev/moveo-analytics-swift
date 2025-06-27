@@ -7,7 +7,7 @@
 
 public struct Constants {
     
-    public static let libVersion = "1.0.16"
+    public static let libVersion = "1.0.17"
 
     public enum Environment: String {
         case development
