@@ -30,7 +30,7 @@ The library supports:
 - **Context-based tracking** for organizing user sessions
 - **Semantic grouping** for logical element organization
 - **Flexible metadata** for enhanced analytics
-- **Real-time data processing** with configurable flush intervals
+- **Data processing** with configurable flush intervals
 - **Multiple event types and actions** for comprehensive interaction capture
 
 ## Quick Start Guide
