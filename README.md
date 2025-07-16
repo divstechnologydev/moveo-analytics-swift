@@ -37,9 +37,7 @@ The library supports:
 
 ### Prerequisites
 
-- iOS 15.0 or later
 - Swift 5.7 or later
-- Xcode 14.0 or later
 - Moveo One API key (obtain from [Moveo One App](https://app.moveo.one/))
 
 ### Installation
