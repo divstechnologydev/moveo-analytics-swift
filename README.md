@@ -69,9 +69,6 @@ MoveoOne.instance.setFlushInterval(interval: 20000)
 
 // Enable logging for debugging
 MoveoOne.instance.setLogging(enabled: true)
-
-// Identify user (optional)
-MoveoOne.instance.identify(userId: "user_123")
 ```
 
 ### Metadata and Additional Metadata
@@ -86,7 +83,7 @@ Updates current session metadata. Session metadata should split sessions by info
 MoveoOne.instance.updateSessionMetadata([
     "locale": "eng",
     "app_version": "1.2.0",
-    "user_type": "premium"
+    "test": "ab"
 ])
 ```
 
@@ -469,7 +466,6 @@ struct SimpleExampleAppApp: App {
     init() {
         // Initialize Moveo Analytics
         MoveoOne.instance.initialize(token: "YOUR_API_KEY")
-        MoveoOne.instance.identify(userId: "demo_user_123")
         MoveoOne.instance.setLogging(enabled: true)
         MoveoOne.instance.setFlushInterval(interval: 5)
         
