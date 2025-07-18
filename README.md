@@ -116,10 +116,9 @@ MoveoOne.instance.track(
         action: .click,
         value: "proceed_to_payment",
         metadata: [
-            "screen": "checkout",
-            "button_type": "primary",
-            "user_type": "premium",
-            "cart_total": "99.99"
+            "test": "a",
+            "locale": "eng",
+            "app_version": "2.1.0"
         ]
     )
 )
@@ -133,10 +132,9 @@ MoveoOne.instance.tick(
         action: .appear,
         value: "product_view",
         metadata: [
-            "product_id": "12345",
-            "category": "electronics",
-            "price_range": "100-200",
-            "featured": "true"
+            "test": "a",
+            "locale": "eng",
+            "app_version": "2.1.0"
         ]
     )
 )
@@ -155,9 +153,9 @@ You **do not need multiple start() calls for multiple contexts**. The `start()` 
 MoveoOne.instance.start(
     context: "main_app_flow",
     metadata: [
-        "ab": "test_1",
-        "locale": "en",
-        "app_version": "1.2"
+        "test": "a",
+        "locale": "eng",
+        "app_version": "2.1.0"
     ]
 )
 ```
@@ -329,22 +327,23 @@ struct MainContentView: View {
                         .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.36))
                         .padding(.top, 60)
                         .padding(.bottom, 40)
-                        .onAppear {
-                            // Track screen appearance
-                            MoveoOne.instance.tick(
-                                moveoOneData: MoveoOneData(
-                                    semanticGroup: "content_interactions",
-                                    id: "main_title",
-                                    type: .text,
-                                    action: .appear,
-                                    value: "app_title",
-                                    metadata: [
-                                        "screen": "main_screen",
-                                        "element_type": "title"
-                                    ]
+                                                    .onAppear {
+                                // Track screen appearance
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: "content_interactions",
+                                        id: "main_title",
+                                        type: .text,
+                                        action: .appear,
+                                        value: "app_title",
+                                        metadata: [
+                                            "test": "a",
+                                            "locale": "eng",
+                                            "app_version": "2.1.0"
+                                        ]
+                                    )
                                 )
-                            )
-                        }
+                            }
                     
                     // Content Container
                     VStack {
@@ -420,12 +419,7 @@ struct MainContentView: View {
                 type: .text,
                 action: .view,
                 value: "demo_description",
-                metadata: [
-                    "screen": "main_screen",
-                    "interaction_type": "impression",
-                    "app_version": "1.0",
-                    "platform": "iOS"
-                ]
+                
             )
         )
     }
@@ -439,10 +433,7 @@ struct MainContentView: View {
                 type: .button,
                 action: .click,
                 value: "primary_action",
-                metadata: [
-                    "source": "home_screen",
-                    "button": buttonName
-                ]
+       
             )
         )
     }
@@ -456,10 +447,7 @@ struct MainContentView: View {
                 type: .textEdit,
                 action: .input,
                 value: "text_entered",
-                metadata: [
-                    "source": "home_screen",
-                    "input_length": String(inputText.count)
-                ]
+  
             )
         )
     }
@@ -477,16 +465,17 @@ struct SimpleExampleAppApp: App {
         MoveoOne.instance.start(
             context: "main_screen",
             metadata: [
-                "app_version": "1.0",
-                "platform": "iOS",
-                "locale": "en_US"
+                "test": "a",
+                "locale": "eng",
+                "app_version": "2.1.0"
             ]
         )
         
         // Update additional metadata
         MoveoOne.instance.updateAdditionalMetadata([
             "user_country": "US",
-            "experiment_group": "test_1"
+            "company": "example_company",
+            "user_role": "admin"
         ])
     }
     
