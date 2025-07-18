@@ -1,135 +1,507 @@
-# moveo-analytics-swift
+# Moveo Analytics Swift Library
 
-<div align="center" style="text-align: center">
-  <img src="https://github.com/user-attachments/assets/ae163684-fcff-4fa8-b793-63849834c735" height="150"/>
-</div>
+<img src="https://www.moveo.one/assets/og_white.png" alt="Moveo Analytics Logo" width="200" />
 
-####
+**Current version: 1.0.17**
+
+A powerful analytics library for iOS applications that provides comprehensive user interaction tracking and behavioral analysis through the Moveo One platform.
+
 ## Table of Contents
-- [Introduction] (#introduction)
-- [Quick Start Guide](#quick-start-guide)
-  - [Add Moveo One Analytics](#1-add-moveo-one-analytics)
-  - [Initialize](#2-initialize)
-  - [Setup](#3-setup)
-  - [Track Data](#4-track-data)
-  - [Obtain API KEY](#5-obtain-api-key)
-  - [Use Results](#6-use-results)
+
+1. [Introduction](#introduction)
+2. [Quick Start Guide](#quick-start-guide)
+   - [Prerequisites](#prerequisites)
+   - [Installation](#installation)
+   - [Library Initialization](#library-initialization)
+   - [Setup](#setup)
+   - [Metadata and Additional Metadata](#metadata-and-additional-metadata)
+   - [Track Data](#track-data)
+3. [Event Types and Actions](#event-types-and-actions)
+4. [Comprehensive Example Usage](#comprehensive-example-usage)
+5. [Obtain API Key](#obtain-api-key)
+6. [Dashboard Access](#dashboard-access)
+7. [Support](#support)
+
 ## Introduction
-Welcome to the official Moveo One SwiftUI library.
 
-Moveo One analytics is the user cognitive-behavioral analytics tool.
-moveo-analytics-swift is SDK for Swift UI iOS client apps to use Moveo One tools.
+Moveo Analytics Swift Library is designed to capture and analyze user interactions within your iOS application. It provides detailed insights into user behavior, interaction patterns, and application usage through a comprehensive tracking system.
+
+The library supports:
+- **Context-based tracking** for organizing user sessions
+- **Semantic grouping** for logical element organization
+- **Flexible metadata** for enhanced analytics
+- **Data processing** with configurable flush intervals
+- **Multiple event types and actions** for comprehensive interaction capture
+
 ## Quick Start Guide
-Moveo One Swift UI SDK is pure Swift implementation of Moveo One Analytics tracker
-### 1. Install Moveo One Analytics
-#### Prerequisites
-TBD
-#### Steps
-1. Add Moveo One Analytics
-By adding dependency
-````
-https://github.com/divstechnologydev/moveo-analytics-swift.git
-````
-through File -> Add Package Dependencies... in XCode
-choose latest version
 
-   
-### 2. Initialize
-Initialization is usually done in AppDelegate.
-To obtain a token, please contact us at: info@moveo.one and request API token.
-We are working on bringing token creation to our dashboard, but for now, due to the early phase, contact us and we will be more than happy to provide you with an API token.
-```
+### Prerequisites
+
+- Swift 5.7 or later
+- Moveo One API key (obtain from [Moveo One App](https://app.moveo.one/))
+
+### Installation
+
+Add the Moveo Analytics Swift Library to your project using Swift Package Manager:
+
+1. In Xcode, go to **File** → **Add Package Dependencies**
+2. Enter the package URL: `https://github.com/your-repo/moveo-analytics-swift`
+3. Select the latest version and add to your target
+
+### Library Initialization
+
+Initialize the library in your `AppDelegate` or `@main` app struct:
+
+```swift
 import MoveoOneLibrary
-...
-MoveoOne.instance.initialize(token: <UNIQUE_TOKEN>)
-MoveoOne.instance.identify(userId: <CURRENT_USER_ID>)
+
+// Initialize with your API token
+MoveoOne.instance.initialize(token: "YOUR_API_KEY")
 ```
 
-This means that you are obtaining an instance of a MoveoOne analytics library, initializing with pre-obtained <TOKNE>
-<USER_ID> is your tracking unique ID of the user who is using the app in order to create personalized analytics.
-It is used on Dashboard and WebHook to deliver you calculated results, so you will need to have the notion of how this user Id correlates with your unique real userID.
-Note: Do not provide user-identifiable information to Moveo One - we do not store them, but nonetheless, we don't need that data, so it's better to create custom bindings.
+### Setup
 
-### 3. Setup
-You may want to setup other parameters, such as:
-```
-MoveoOne.instance.setLogging(enabled: true)
+Configure additional parameters as needed:
 
-```
-To log responses from Moveo One library
-
-```
+```swift
+// Set flush interval (in seconds)
 MoveoOne.instance.setFlushInterval(interval: 20000)
-```
-To set automatic flush interval in milliseconds.
-Note: the available range is [5000, 60000], aka 5s to 1min
 
-### 4. Track Data
-In order to track data, we will need to explain a couple of concepts
-#### a) Context
-The context is usually a single interaction session that a user has with the app.
-More precisely, the context is usually a set of screens, like onboarding. There are no obstacles in creating single-screen contexts, but for now, we will explain multi-screen context.
-
-Context needs to be started
-```
-MoveoOne.instance.start(context: "context", metadata: ["key": "value"])
-
-```
-The context as we explained might be anything and it is ok that you may have only one context for MoveoOne integration.
-metadata is free form String to String dictionary that enables you to tag sessions of Moveo One interaction for future comparison and better analytics.
-Usally, this is A/B testing group, locale, app versino etc...
-It might be:
-```
-metadata: ["ab": "test_1", "locale": "en", "app_version": "1.2"]
+// Enable logging for debugging
+MoveoOne.instance.setLogging(enabled: true)
 ```
 
-#### b) semantic group
-Semantic groups are one more level of abstraction.
-Semantic group is usually a screen - something that is semantically atomic from user perspective.
+### Metadata and Additional Metadata
 
-Semantic group is one of the first mandatory field you are tracking in MoveoData which we will be exploring in next section:
+The library supports two types of metadata management:
+
+#### updateSessionMetadata()
+
+Updates current session metadata. Session metadata should split sessions by information that influences content or creates visually different variations of the same application.
+
+```swift
+MoveoOne.instance.updateSessionMetadata([
+    "test": "a",
+    "locale": "eng",
+    "app_version": "2.1.0"
+])
 ```
-public struct MoveoOneData {
-    public let semanticGroup: String
-    public let id: String
-    public let type: Constants.MoveoOneType
-    public let action: Constants.MoveoOneAction
-    public let value: Any
-    public let metadata: [String: String]?
+
+#### updateAdditionalMetadata()
+
+Updates additional metadata for the session. This is used as data enrichment and enables specific queries or analysis by the defined split.
+
+```swift
+MoveoOne.instance.updateAdditionalMetadata([
+    "user_country": "US",
+    "company": "example_company",
+    "user_role": "admin", // or "user", "manager", "viewer"
+    "acquisition_channel": "organic", // or "paid", "referral", "direct"
+    "device_category": "mobile", // or "desktop", "tablet"
+    "subscription_plan": "pro", // or "basic", "enterprise"
+    "has_purchased": "true" // or "false"
+])
+```
+
+**Metadata Support in Track and Tick Events:**
+
+```swift
+// Track with metadata
+MoveoOne.instance.track(
+    context: "checkout_screen",
+    moveoOneData: MoveoOneData(
+        semanticGroup: "user_interactions",
+        id: "checkout_button",
+        type: .button,
+        action: .click,
+        value: "proceed_to_payment",
+        metadata: [
+            "test": "a",
+            "locale": "eng",
+            "app_version": "2.1.0"
+        ]
+    )
+)
+
+// Tick with metadata
+MoveoOne.instance.tick(
+    moveoOneData: MoveoOneData(
+        semanticGroup: "content_interactions",
+        id: "product_card",
+        type: .card,
+        action: .appear,
+        value: "product_view",
+        metadata: [
+            "test": "a",
+            "locale": "eng",
+            "app_version": "2.1.0"
+        ]
+    )
+)
+```
+
+### Track Data
+
+#### Understanding start() Calls and Context
+
+**Single Session, Single Start**
+
+You **do not need multiple start() calls for multiple contexts**. The `start()` method is called only **once at the beginning of a session** and must be called before any `track()` or `tick()` calls.
+
+```swift
+// Start session with context
+MoveoOne.instance.start(
+    context: "main_app_flow",
+    metadata: [
+        "test": "a",
+        "locale": "eng",
+        "app_version": "2.1.0"
+    ]
+)
+```
+
+#### When to Use Each Tracking Method
+
+**Use track() when:**
+- You want to explicitly specify the event context
+- You need to change context between events
+- You want to use different context than one specified in start method
+
+```swift
+MoveoOne.instance.track(
+    context: "checkout_process",
+    moveoOneData: MoveoOneData(
+        semanticGroup: "user_interactions",
+        id: "payment_button",
+        type: .button,
+        action: .click,
+        value: "pay_now",
+        metadata: [:]
+    )
+)
+```
+
+**Use tick() when:**
+- You're tracking events within the same context
+- You want tracking without explicitly defining context
+- You want to track events in same context specified in start method
+
+```swift
+MoveoOne.instance.tick(
+    moveoOneData: MoveoOneData(
+        semanticGroup: "screen_0",
+        id: "text_view_1",
+        type: .text,
+        action: .view,
+        value: "welcome_message",
+        metadata: [:]
+    )
+)
+```
+
+#### Context Definition
+
+- **Context** represents large, independent parts of the application and serves to divide the app into functional units that can exist independently of each other
+- Examples: `onboarding`, `main_app_flow`, `checkout_process`
+
+#### Semantic Groups
+
+- **Semantic groups** are logical units **within a context** that group related elements
+- Depending on the application, this could be a group of elements or an entire screen (most common)
+- Examples: `navigation`, `user_input`, `content_interaction`
+
+## Event Types and Actions
+
+### Available Event Types
+
+| Type | Description |
+|------|-------------|
+| `button` | Interactive buttons |
+| `text` | Text elements |
+| `textEdit` | Text input fields |
+| `image` | Single images |
+| `images` | Multiple images |
+| `image_scroll_horizontal` | Horizontal image scrolling |
+| `image_scroll_vertical` | Vertical image scrolling |
+| `picker` | Selection pickers |
+| `slider` | Slider controls |
+| `switchControl` | Toggle switches |
+| `progressBar` | Progress indicators |
+| `checkbox` | Checkbox controls |
+| `radioButton` | Radio button controls |
+| `table` | Table views |
+| `collection` | Collection views |
+| `segmentedControl` | Segmented controls |
+| `stepper` | Stepper controls |
+| `datePicker` | Date pickers |
+| `timePicker` | Time pickers |
+| `searchBar` | Search bars |
+| `webView` | Web view components |
+| `scrollView` | Scroll views |
+| `activityIndicator` | Loading indicators |
+| `video` | Video elements |
+| `videoPlayer` | Video players |
+| `audioPlayer` | Audio players |
+| `map` | Map components |
+| `tabBar` | Tab bar components |
+| `tabBarPage` | Tab bar pages |
+| `tabBarPageTitle` | Tab bar page titles |
+| `tabBarPageSubtitle` | Tab bar page subtitles |
+| `toolbar` | Toolbar components |
+| `alert` | Alert dialogs |
+| `alertTitle` | Alert titles |
+| `alertSubtitle` | Alert subtitles |
+| `modal` | Modal dialogs |
+| `toast` | Toast notifications |
+| `badge` | Badge elements |
+| `dropdown` | Dropdown menus |
+| `card` | Card components |
+| `chip` | Chip elements |
+| `grid` | Grid layouts |
+| `custom` | Custom elements |
+
+### Available Event Actions
+
+| Action | Description |
+|--------|-------------|
+| `click` | Element clicked (normalized to `tap`) |
+| `view` | Element viewed (normalized to `appear`) |
+| `appear` | Element appeared |
+| `disappear` | Element disappeared |
+| `swipe` | Swipe gesture |
+| `scroll` | Scroll action |
+| `drag` | Drag action |
+| `drop` | Drop action |
+| `tap` | Tap gesture |
+| `doubleTap` | Double tap gesture |
+| `longPress` | Long press gesture |
+| `pinch` | Pinch gesture |
+| `zoom` | Zoom action |
+| `rotate` | Rotate action |
+| `submit` | Form submission |
+| `select` | Selection action |
+| `deselect` | Deselection action |
+| `hover` | Hover action |
+| `focus` | Focus action |
+| `blur` | Blur action |
+| `input` | Input action |
+| `valueChange` | Value change |
+| `dragStart` | Drag start |
+| `dragEnd` | Drag end |
+| `load` | Load action (normalized to `appear`) |
+| `unload` | Unload action (normalized to `disappear`) |
+| `refresh` | Refresh action |
+| `play` | Play action |
+| `pause` | Pause action |
+| `stop` | Stop action |
+| `seek` | Seek action |
+| `error` | Error action |
+| `success` | Success action |
+| `cancel` | Cancel action |
+| `retry` | Retry action |
+| `share` | Share action |
+| `open` | Open action (normalized to `appear`) |
+| `close` | Close action (normalized to `disappear`) |
+| `expand` | Expand action |
+| `collapse` | Collapse action |
+| `edit` | Edit action |
+| `custom` | Custom action |
+
+## Comprehensive Example Usage
+
+Here's a complete example showing how to integrate Moveo Analytics in a SwiftUI app:
+
+```swift
+import MoveoOneLibrary
+import SwiftUI
+
+struct MainContentView: View {
+    @State private var inputText: String = ""
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ScrollView {
+                VStack {
+                    Text("Moveo One")
+                        .font(.system(size: 32, weight: .bold))
+                        .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.36))
+                        .padding(.top, 60)
+                        .padding(.bottom, 40)
+                                                    .onAppear {
+                                // Track screen appearance
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: "content_interactions",
+                                        id: "main_title",
+                                        type: .text,
+                                        action: .appear,
+                                        value: "app_title",
+                                        metadata: [
+                                            "test": "a",
+                                            "locale": "eng",
+                                            "app_version": "2.1.0"
+                                        ]
+                                    )
+                                )
+                            }
+                    
+                    // Content Container
+                    VStack {
+                        Text("This is an example SwiftUI app made for demo purposes.")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(red: 0.29, green: 0.33, blue: 0.41))
+                            .lineSpacing(6)
+                            .multilineTextAlignment(.center)
+                            .padding(.bottom, 30)
+                            .onAppear {
+                                trackParagraphImpression()
+                            }
+                        
+                        // Buttons
+                        VStack(spacing: 16) {
+                            Button("Button One") {
+                                handleButtonPress("Button One")
+                            }
+                            .onAppear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: "content_interactions",
+                                        id: "main_button",
+                                        type: .button,
+                                        action: .appear,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .onDisappear {
+                                MoveoOne.instance.tick(
+                                    moveoOneData: MoveoOneData(
+                                        semanticGroup: "content_interactions",
+                                        id: "main_button",
+                                        type: .button,
+                                        action: .disappear,
+                                        value: "Button One",
+                                        metadata: [:]
+                                    )
+                                )
+                            }
+                            .buttonStyle(MoveoButtonStyle(primary: true))
+                            
+                            Button("Button Two") {
+                                handleButtonPress("Button Two")
+                            }
+                            .buttonStyle(MoveoButtonStyle(primary: false))
+                        }
+                        .padding(.bottom, 20)
+                        
+                        // Text Field
+                        TextField("Type something...", text: $inputText)
+                            .textFieldStyle(MoveoTextFieldStyle())
+                            .onSubmit(handleInputSubmit)
+                    }
+                    .padding(25)
+                    .background(Color.white)
+                    .cornerRadius(20)
+                    .shadow(color: Color(red: 0.17, green: 0.42, blue: 0.69).opacity(0.1), radius: 10, y: 4)
+                    .frame(width: geometry.size.width * 0.85)
+                }
+            }
+            .background(Color(red: 0.94, green: 0.97, blue: 0.98))
+        }
+    }
+    
+    private func trackParagraphImpression() {
+        MoveoOne.instance.tick(
+            moveoOneData: MoveoOneData(
+                semanticGroup: "content_interactions",
+                id: "intro_paragraph",
+                type: .text,
+                action: .view,
+                value: "demo_description",
+                
+            )
+        )
+    }
+    
+    private func handleButtonPress(_ buttonName: String) {
+        MoveoOne.instance.track(
+            context: "main_screen",
+            moveoOneData: MoveoOneData(
+                semanticGroup: "user_interactions",
+                id: "main_button",
+                type: .button,
+                action: .click,
+                value: "primary_action",
+       
+            )
+        )
+    }
+    
+    private func handleInputSubmit() {
+        MoveoOne.instance.track(
+            context: "main_screen",
+            moveoOneData: MoveoOneData(
+                semanticGroup: "user_interactions",
+                id: "main_input",
+                type: .textEdit,
+                action: .input,
+                value: "text_entered",
+  
+            )
+        )
+    }
 }
 
-```
-
-#### c) simple data tracking
-Data is tracked from user interaction with SwiftUI Components and thus, some bindings need to be placed in user interaction places.
-Also, the data about how much text we have on the screen needs to be tracked through setting some onAppear interactions.
-
-You would like to setup some basic on appear events:
-```
-.onAppear() {
-    MoveoOne.instance.tick(
-          moveoOneData: MoveoOneData(
-                    semanticGroup: "screen_0",
-                    id: "text_view_1",
-                    type: .text,
-                    action: .view,
-                    value: data.text,
-                    metadata: [:]
-                ))
+@main
+struct SimpleExampleAppApp: App {
+    init() {
+        // Initialize Moveo Analytics
+        MoveoOne.instance.initialize(token: "YOUR_API_KEY")
+        MoveoOne.instance.setLogging(enabled: true)
+        MoveoOne.instance.setFlushInterval(interval: 5)
+        
+        // Start session with context
+        MoveoOne.instance.start(
+            context: "main_screen",
+            metadata: [
+                "test": "a",
+                "locale": "eng",
+                "app_version": "2.1.0"
+            ]
+        )
+        
+        // Update additional metadata
+        MoveoOne.instance.updateAdditionalMetadata([
+            "user_country": "US",
+            "company": "example_company",
+            "user_role": "admin"
+        ])
+    }
+    
+    var body: some Scene {
+        WindowGroup {
+            MainContentView()
+        }
+    }
 }
 ```
 
-#### More on tracking data
+## Obtain API Key
 
-#### Some examples
+You can find your organization's API token in the [Moveo One App](https://app.moveo.one/). Navigate to your organization settings to retrieve your unique API key.
 
-### 5. Obtain API KEY
+## Dashboard Access
 
-#### API KEY
+Once your data is being tracked, you can access your analytics through [Moveo One Dashboard](https://app.moveo.one/). The dashboard provides comprehensive insights into user behavior, interaction patterns, and application performance.
 
-### 6. Use Results
+## Support
 
-#### Data ingestion
+For any issues or support, feel free to:
 
-#### Dashboard
+- Open an **issue** on our [GitHub repository](https://github.com/divstechnologydev/moveoone-flutter/issues)
+- Email us at [**info@moveo.one**](mailto:info@moveo.one)
 
+---
+
+**Note:** This library is designed for iOS applications and requires iOS 15.0 or later. Make sure to handle user privacy and data collection in compliance with relevant regulations.
