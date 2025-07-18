@@ -81,9 +81,9 @@ Updates current session metadata. Session metadata should split sessions by info
 
 ```swift
 MoveoOne.instance.updateSessionMetadata([
+    "test": "a",
     "locale": "eng",
-    "app_version": "1.2.0",
-    "test": "ab"
+    "app_version": "2.1.0"
 ])
 ```
 
@@ -95,7 +95,11 @@ Updates additional metadata for the session. This is used as data enrichment and
 MoveoOne.instance.updateAdditionalMetadata([
     "user_country": "US",
     "company": "example_company",
-    "experiment_group": "test_1"
+    "user_role": "admin", // or "user", "manager", "viewer"
+    "acquisition_channel": "organic", // or "paid", "referral", "direct"
+    "device_category": "mobile", // or "desktop", "tablet"
+    "subscription_plan": "pro", // or "basic", "enterprise"
+    "has_purchased": "true" // or "false"
 ])
 ```
 
