@@ -29,7 +29,6 @@ public struct MoveoOneData {
 struct MoveoOneEntity: Codable {
     var c: String //context
     var type: String
-    var userId: String
     var t: Int
     var prop: [String: String]
     var meta: [String: String]
@@ -37,10 +36,9 @@ struct MoveoOneEntity: Codable {
     var additionalMeta: [String: String]?
 
     
-    init(c: String, type: Constants.MoveoOneEventType, userId: String, t: Int, prop: [String : String], meta: [String: String], sId: String, additionalMeta: [String: String]? = nil) {
+    init(c: String, type: Constants.MoveoOneEventType, t: Int, prop: [String : String], meta: [String: String], sId: String, additionalMeta: [String: String]? = nil) {
         self.c = c
         self.type = type.rawValue
-        self.userId = userId
         self.t = t
         self.prop = prop
         self.meta = meta
@@ -48,10 +46,9 @@ struct MoveoOneEntity: Codable {
         self.additionalMeta = additionalMeta
     }
     
-    init(c: String, type: String, userId: String, t: Int, prop: [String : String], meta: [String: String], sId: String, additionalMeta: [String: String]? = nil) {
+    init(c: String, type: String, t: Int, prop: [String : String], meta: [String: String], sId: String, additionalMeta: [String: String]? = nil) {
         self.c = c
         self.type = type
-        self.userId = userId
         self.t = t
         self.prop = prop
         self.meta = meta

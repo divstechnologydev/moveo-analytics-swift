@@ -13,7 +13,6 @@ public final class MoveoOne: @unchecked Sendable {
     
     private var buffer: [MoveoOneEntity] = [MoveoOneEntity]()
     private var token: String
-    private var userId: String
     
     private var logging = false
     private var flushInterval: Int = 10
@@ -30,16 +29,11 @@ public final class MoveoOne: @unchecked Sendable {
     
     private init() {
         token = ""
-        userId = ""
         formatter.dateFormat = "SSS"
     }
     
     public func initialize(token: String) {
         self.token = token
-    }
-    
-    public func identify(userId: String) {
-        self.userId = userId
     }
     
     public func getToken() -> String {
@@ -70,7 +64,7 @@ public final class MoveoOne: @unchecked Sendable {
             var updatedMetadata = metadata ?? [:]
             updatedMetadata["lib_version"] = Constants.libVersion
             
-            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: updatedMetadata)
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], sessionId: self.sessionId, meta: updatedMetadata)
             self.flushOrRecord(isStopOrStart: false)
         }
     }
@@ -125,7 +119,7 @@ public final class MoveoOne: @unchecked Sendable {
     public func updateSessionMetadata(metadata: [String: String]) {
         log(msg: "update session metadata")
         if self.started {
-            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: metadata)
+            self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], sessionId: self.sessionId, meta: metadata)
             self.flushOrRecord(isStopOrStart: false)
         }
     }
@@ -133,7 +127,7 @@ public final class MoveoOne: @unchecked Sendable {
     public func updateAdditionalMetadata(additionalMeta: [String: String]) {
         log(msg: "update additional metadata")
         if self.started {
-            self.addEventToBufferWithAdditionalMeta(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], userId: self.userId, sessionId: self.sessionId, meta: [:], additionalMeta: additionalMeta)
+            self.addEventToBufferWithAdditionalMeta(context: self.context, type: Constants.MoveoOneEventType.update_metadata, prop: [:], sessionId: self.sessionId, meta: [:], additionalMeta: additionalMeta)
             self.flushOrRecord(isStopOrStart: false)
         }
     }
@@ -144,7 +138,7 @@ public final class MoveoOne: @unchecked Sendable {
         }
         self.verifyContext(context: context)
         self.verifyProps(props: properties)
-        self.addEventToBuffer(context: context, type: Constants.MoveoOneEventType.track, prop: properties, userId: self.userId, sessionId: self.sessionId, meta: metadata)
+        self.addEventToBuffer(context: context, type: Constants.MoveoOneEventType.track, prop: properties, sessionId: self.sessionId, meta: metadata)
         self.flushOrRecord(isStopOrStart: false)
     }
     
@@ -154,7 +148,7 @@ public final class MoveoOne: @unchecked Sendable {
             self.start(context: context, metadata: metadata)
         }
         self.verifyProps(props: properties)
-        self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.track, prop: properties, userId: self.userId, sessionId: self.sessionId, meta: metadata)
+        self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.track, prop: properties, sessionId: self.sessionId, meta: metadata)
         self.flushOrRecord(isStopOrStart: false)
     }
     
@@ -171,13 +165,12 @@ public final class MoveoOne: @unchecked Sendable {
         }
     }
     
-    private func addEventToBuffer(context: String, type: Constants.MoveoOneEventType, prop: [String: String], userId: String, sessionId: String, meta: [String: String]) {
+    private func addEventToBuffer(context: String, type: Constants.MoveoOneEventType, prop: [String: String], sessionId: String, meta: [String: String]) {
         let now = Date.now
         self.buffer.append(
             MoveoOneEntity(
                 c: context,
                 type: type,
-                userId: userId,
                 t: Int(now.timeIntervalSince1970)*1000 + (Int(formatter.string(from: now)) ?? 0),
                 prop: prop,
                 meta: meta,
@@ -186,18 +179,17 @@ public final class MoveoOne: @unchecked Sendable {
         )
     }
     
-    private func addEventToBufferWithAdditionalMeta(context: String, type: Constants.MoveoOneEventType, prop: [String: String], userId: String, sessionId: String, meta: [String: String], additionalMeta: [String: String]) {
+    private func addEventToBufferWithAdditionalMeta(context: String, type: Constants.MoveoOneEventType, prop: [String: String], sessionId: String, meta: [String: String], additionalMeta: [String: String]) {
         let now = Date.now
         self.buffer.append(
             MoveoOneEntity(
                 c: context,
                 type: type,
-                userId: userId,
                 t: Int(now.timeIntervalSince1970)*1000 + (Int(formatter.string(from: now)) ?? 0),
                 prop: prop,
                 meta: meta,
                 sId: sessionId,
-                additionalMeta: additionalMeta  // You'll need to add this property to MoveoOneEntity
+                additionalMeta: additionalMeta
             )
         )
     }
@@ -211,7 +203,6 @@ public final class MoveoOne: @unchecked Sendable {
                     return MoveoOneEntity(
                         c: originalEntity.c,
                         type: originalEntity.type,
-                        userId: originalEntity.userId,
                         t: originalEntity.t,
                         prop: originalEntity.prop,
                         meta: originalEntity.meta,
@@ -237,7 +228,6 @@ public final class MoveoOne: @unchecked Sendable {
                     return MoveoOneEntity(
                         c: originalEntity.c,
                         type: originalEntity.type,
-                        userId: originalEntity.userId,
                         t: originalEntity.t,
                         prop: originalEntity.prop,
                         meta: originalEntity.meta,
