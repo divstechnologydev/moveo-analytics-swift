@@ -8,7 +8,6 @@ final class MoveoOneTests: XCTestCase {
         super.setUp()
         sut = MoveoOne.instance
         sut.initialize(token: "test-token")
-        sut.identify(userId: "test-user")
         sut.setLogging(enabled: true)
     }
     
@@ -49,7 +48,8 @@ final class MoveoOneTests: XCTestCase {
             id: "test-id",
             action: .click,
             type: .button,
-            value: "test-value"
+            value: "test-value",
+            metadata: nil
         )
         sut.tick(moveoOneData: testData)
         
@@ -76,7 +76,8 @@ final class MoveoOneTests: XCTestCase {
                 id: "test-id",
                 action: .click,
                 type: .button,
-                value: "test-value"
+                value: "test-value",
+                metadata: nil
             )
             sut.tick(moveoOneData: testData)
         }
@@ -99,7 +100,8 @@ final class MoveoOneTests: XCTestCase {
                 id: "test-id",
                 action: .click,
                 type: .button,
-                value: "test-value"
+                value: "test-value",
+                metadata: nil
             )
             sut.tick(moveoOneData: testData)
         }
@@ -114,7 +116,8 @@ final class MoveoOneTests: XCTestCase {
                 id: "test-id-2",
                 action: .click,
                 type: .button,
-                value: "test-value-2"
+                value: "test-value-2",
+                metadata: nil
             )
             sut.tick(moveoOneData: testData)
         }

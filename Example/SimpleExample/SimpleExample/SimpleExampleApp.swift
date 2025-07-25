@@ -34,7 +34,7 @@ struct MainContentView: View {
                             .onAppear {
                                         MoveoOne.instance.tick(
                                             moveoOneData: MoveoOneData(
-                                                semanticGroup: content_interactions,
+                                                semanticGroup: "content_interactions",
                                                 id: "main_button",
                                                 type: .button,
                                                 action: .appear,
@@ -46,7 +46,7 @@ struct MainContentView: View {
                             .onDisappear {
                                         MoveoOne.instance.tick(
                                             moveoOneData: MoveoOneData(
-                                                semanticGroup: content_interactions,
+                                                semanticGroup: "content_interactions",
                                                 id: "main_button",
                                                 type: .button,
                                                 action: .disappear,
@@ -165,7 +165,6 @@ struct MoveoTextFieldStyle: TextFieldStyle {
 struct SimpleExampleAppApp: App {
     init() {
         MoveoOne.instance.initialize(token: "YOUR_API_KEY")
-        MoveoOne.instance.identify(userId: "demo_user_123")
         MoveoOne.instance.setLogging(enabled: true)
         MoveoOne.instance.setFlushInterval(interval: 5)
         
