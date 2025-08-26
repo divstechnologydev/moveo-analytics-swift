@@ -62,7 +62,7 @@ public final class MoveoOne: @unchecked Sendable {
             self.sessionId = "sid_" + UUID().uuidString
             
             var updatedMetadata = metadata ?? [:]
-            updatedMetadata["lib_version"] = Constants.libVersion
+            updatedMetadata["libVersion"] = Constants.libVersion
             
             self.addEventToBuffer(context: self.context, type: Constants.MoveoOneEventType.start_session, prop: [:], sessionId: self.sessionId, meta: updatedMetadata)
             self.flushOrRecord(isStopOrStart: false)
