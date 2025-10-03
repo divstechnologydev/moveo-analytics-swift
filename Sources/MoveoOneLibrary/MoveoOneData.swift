@@ -77,6 +77,27 @@ struct MoveoOnePrediction: Codable {
     var errorCode: String?
 }
 
+public struct MoveoOnePredictionResponse: Codable {
+    public let success: Bool
+    public let status: String
+    public let prediction_probability: Double?
+    public let prediction_binary: Bool?
+    public let message: String?
+    
+    public init(success: Bool, status: String, prediction_probability: Double? = nil, prediction_binary: Bool? = nil, message: String? = nil) {
+        self.success = success
+        self.status = status
+        self.prediction_probability = prediction_probability
+        self.prediction_binary = prediction_binary
+        self.message = message
+    }
+}
+
+struct MoveoOnePredictionRequest: Codable {
+    let events: [MoveoOneEntity]
+    let session_id: String
+}
+
 
 struct BuzzFeedbackModel: Encodable {
     let sessionId: String
@@ -120,6 +141,16 @@ extension MoveoOnePrediction {
 }
 
 extension MoveoOneAnalyticsResponse {
+    func asDictionary() throws -> [String: Any] {
+      let data = try JSONEncoder().encode(self)
+      guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+        throw NSError()
+      }
+      return dictionary
+    }
+}
+
+extension MoveoOnePredictionRequest {
     func asDictionary() throws -> [String: Any] {
       let data = try JSONEncoder().encode(self)
       guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {

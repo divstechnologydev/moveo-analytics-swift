@@ -292,4 +292,53 @@ public final class MoveoOne: @unchecked Sendable {
     public func getContext() -> String {
         return self.context
     }
+    
+    
+    public func predict(modelId: String) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
+        // Validate modelId
+        guard !modelId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "invalid_model_id",
+                message: "Model ID is required and must be a non-empty string"
+            )
+            return .success(errorResponse)
+        }
+        
+        // Check if MoveoOne is started
+        guard self.started else {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "not_initialized",
+                message: "MoveoOne must be started before using predict method. Call start() first."
+            )
+            return .success(errorResponse)
+        }
+        
+        // Check if sessionId exists
+        guard !self.sessionId.isEmpty else {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "no_session",
+                message: "No active session found. Please ensure MoveoOne is properly started."
+            )
+            return .success(errorResponse)
+        }
+        
+        // Create prediction request with current buffer events and session ID
+        let predictionRequest = MoveoOnePredictionRequest(
+            events: self.buffer,
+            session_id: self.sessionId
+        )
+        
+        // Send prediction request asynchronously
+        let predicionActor = predictionActor()
+        return await predicionActor.sendPredictionRequest(modelId: modelId.trimmingCharacters(in: .whitespacesAndNewlines), payload: predictionRequest)
+    }
+    
+    private actor predictionActor {
+        func sendPredictionRequest(modelId: String, payload: MoveoOnePredictionRequest) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
+            return await MoveoOneService.shared.predict(modelId: modelId, payload: payload)
+        }
+    }
 }

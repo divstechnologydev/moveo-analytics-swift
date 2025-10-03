@@ -11,6 +11,7 @@ import MultipartFormDataKit
 
 protocol MoveoOneHTTPClient {
     func sendRequest<T: Decodable>(endpoint: MoveoOneEndpoint, responseModel: T.Type) async -> Result<T, MoveoOneRequestError>
+    func sendPredictionRequest<T: Decodable>(endpoint: MoveoOneEndpoint, responseModel: T.Type) async -> Result<T, MoveoOneRequestError>
 }
 
 extension MoveoOneHTTPClient {
@@ -90,6 +91,114 @@ extension MoveoOneHTTPClient {
             }
         } catch {
             return .failure(.unknown)
+        }
+    }
+    
+    func sendPredictionRequest<T: Decodable>(
+        endpoint: MoveoOneEndpoint,
+        responseModel: T.Type
+    ) async -> Result<T, MoveoOneRequestError> {
+        var urlComponents = URLComponents()
+        urlComponents.scheme = endpoint.scheme
+        urlComponents.host = endpoint.host
+        urlComponents.path = endpoint.path
+        
+        if let queryParameters = endpoint.queryParameters {
+            urlComponents.queryItems = queryParameters
+        }
+        
+        if let urlParameter = endpoint.urlParameter {
+            urlComponents.path.append("/\(urlParameter)")
+        }
+        
+        guard let url = urlComponents.url else {
+            return .failure(.invalidURL)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = endpoint.method.rawValue
+        request.allHTTPHeaderFields = endpoint.header
+        
+        if let body = endpoint.body {
+            request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
+        }
+        
+        // Set timeout for prediction requests (150ms as mentioned in JS implementation)
+        request.timeoutInterval = 0.15
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
+            
+            MoveoOne.instance.log(msg: request.cURLMoveoOne())
+            
+            guard let response = response as? HTTPURLResponse else {
+                return .failure(.noResponse)
+            }
+            
+            // Handle different response status codes for prediction requests
+            switch response.statusCode {
+            case 200...299:
+                guard let decodedResponse = try? JSONDecoder().decode(responseModel, from: data) else {
+                    return .failure(.decode)
+                }
+                return .success(decodedResponse)
+            case 202:
+                // Model is loading or validating
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "pending",
+                    message: "Model is loading, please try again"
+                )
+                return .success(errorResponse as! T)
+            case 404:
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "not_found",
+                    message: "Model not found or not accessible"
+                )
+                return .success(errorResponse as! T)
+            case 409:
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "conflict",
+                    message: "Conditional event not found"
+                )
+                return .success(errorResponse as! T)
+            case 422:
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "invalid_data",
+                    message: "Invalid prediction data"
+                )
+                return .success(errorResponse as! T)
+            case 500:
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "server_error",
+                    message: "Server error processing prediction request"
+                )
+                return .success(errorResponse as! T)
+            case 400:
+                return .failure(.badRequest)
+            case 401:
+                return .failure(.unauthorized)
+            default:
+                return .failure(.unexpectedStatusCode)
+            }
+        } catch is URLError where URLError.Code == .timedOut {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "timeout",
+                message: "Request timed out after 150 milliseconds"
+            )
+            return .success(errorResponse as! T)
+        } catch {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "network_error",
+                message: "Network error - please check your connection"
+            )
+            return .success(errorResponse as! T)
         }
     }
 }

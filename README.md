@@ -497,6 +497,159 @@ Once your data is being tracked, you can access your analytics through [Moveo On
 
 ## Support
 
+## Prediction API
+
+The MoveoOne library includes a prediction method that allows you to get real-time predictions from your trained models.
+
+### Basic Usage
+
+```swift
+// Initialize and start MoveoOne first
+MoveoOne.instance.initialize(token: "YOUR_TOKEN_HERE")
+MoveoOne.instance.start(context: "YOUR_CONTEXT", metadata: nil)
+
+// Get prediction from a model
+await MoveoOne.instance.predict(modelId: "your-model-id")
+```
+
+### Using Swift's Result Type
+
+The predict method returns a `Result<MoveoOnePredictionResponse, MoveoOneRequestError>`:
+
+```swift
+let result = await MoveoOne.instance.predict(modelId: "your-model-id")
+
+switch result {
+case .success(let response):
+    if response.success {
+        print("Prediction probability: \(response.prediction_probability ?? 0.0)")
+        print("Binary result: \(response.prediction_binary ?? false)")
+    } else {
+        print("Error: \(response.message ?? "Unknown error")")
+        print("Status: \(response.status)")
+    }
+case .failure(let error):
+    print("Network error: \(error)")
+}
+```
+
+### Using Async/Await with Do-Catch
+
+```swift
+do {
+    let result = await MoveoOne.instance.predict(modelId: "your-model-id")
+    switch result {
+    case .success(let response):
+        if response.success {
+            handlePrediction(response.prediction_probability)
+        } else {
+            handleError(response)
+        }
+    case .failure(let error):
+        handleNetworkError(error)
+    }
+} catch {
+    // Handle unexpected errors
+    print("Unexpected error: \(error)")
+}
+```
+
+### Response Examples
+
+### Success Response
+
+```swift
+MoveoOnePredictionResponse(
+    success: true,
+    status: "success",
+    prediction_probability: 0.85,
+    prediction_binary: true,
+    message: nil
+)
+```
+
+### Error Responses
+
+#### Not Initialized
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "not_initialized",
+    message: "MoveoOne must be started before using predict method. Call start() first."
+)
+```
+
+#### Invalid Model ID
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "invalid_model_id",
+    message: "Model ID is required and must be a non-empty string"
+)
+```
+
+#### Model Loading/Validating (Pending State)
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "pending",
+    message: "Model is loading, please try again"
+)
+```
+
+#### Model Not Found
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "not_found",
+    message: "Model not found or not accessible"
+)
+```
+
+#### Conflict Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "conflict",
+    message: "Conditional event not found"
+)
+```
+
+#### Server Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "server_error",
+    message: "Server error processing prediction request"
+)
+```
+
+#### Network Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "network_error",
+    message: "Network error - please check your connection"
+)
+```
+
+#### Timeout
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "timeout",
+    message: "Request timed out after 150 milliseconds"
+)
+```
+
+### Important Notes
+
+- The `predict` method is **async** and **non-blocking** - it won't affect your app's UI performance
+- All requests have a 150-millisecond timeout to prevent hanging
+- The method automatically uses the current session ID and sends all buffered events to the prediction service
+- Always check `success: true` for complete predictions 
+- Make sure to start MoveoOne with `start()` before calling `predict()`
+
 For any issues or support, feel free to:
 
 - Open an **issue** on our [GitHub repository](https://github.com/divstechnologydev/moveoone-flutter/issues)
