@@ -9,6 +9,7 @@ import Foundation
 import Gzip
 import MultipartFormDataKit
 
+@available(iOS 15.0, macOS 12.0, *)
 protocol MoveoOneHTTPClient {
     func sendRequest<T: Decodable>(endpoint: MoveoOneEndpoint, responseModel: T.Type) async -> Result<T, MoveoOneRequestError>
     func sendPredictionRequest<T: Decodable>(endpoint: MoveoOneEndpoint, responseModel: T.Type) async -> Result<T, MoveoOneRequestError>
@@ -185,7 +186,7 @@ extension MoveoOneHTTPClient {
             default:
                 return .failure(.unexpectedStatusCode)
             }
-        } catch is URLError where URLError.Code == .timedOut {
+        } catch let urlError as URLError where urlError.code == .timedOut {
             let errorResponse = MoveoOnePredictionResponse(
                 success: false,
                 status: "timeout",

@@ -5,7 +5,7 @@
 //  Created by Vladimir Jeftovic on 16.11.23..
 //
 
-enum MoveoOneRequestError: Error {
+public enum MoveoOneRequestError: Error {
     case decode
     case invalidURL
     case badRequest

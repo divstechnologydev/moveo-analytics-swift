@@ -7,12 +7,14 @@
 
 import Foundation
 
- protocol MoveoOneServicable {
+ @available(iOS 15.0, macOS 12.0, *)
+protocol MoveoOneServicable {
      func storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest) async -> Result<SaveDataResponse, MoveoOneRequestError>
      func storeAnalyticsSyncEvent(payload: MoveoOneAnalyticsRequest) async -> Result<MoveoOneAnalyticsResponse, MoveoOneRequestError>
      func predict(modelId: String, payload: MoveoOnePredictionRequest) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError>
  }
 
+@available(iOS 15.0, macOS 12.0, *)
 struct MoveoOneService: MoveoOneHTTPClient, MoveoOneServicable {
     static let shared = MoveoOneService()
     
