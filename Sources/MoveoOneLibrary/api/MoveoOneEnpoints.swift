@@ -30,7 +30,8 @@ extension MoveoOneEnpoints: MoveoOneEndpoint {
         case .analyticsSyncEvent:
             return "analytic/event-sync"
         case .predict(let modelId, _):
-            return "api/models/\(modelId)/predict"
+            return "/api/models/\(modelId)/predict"
+
         }
     }
 
