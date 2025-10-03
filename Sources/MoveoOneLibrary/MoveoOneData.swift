@@ -98,6 +98,15 @@ struct MoveoOnePredictionRequest: Codable {
     let session_id: String
 }
 
+// Temporary struct to capture Dolphin API response format
+struct DolphinPredictionResponse: Codable {
+    let model_id: String?
+    let prediction_probability: Double?
+    let prediction_binary: Bool?
+    let message: String?
+    let detail: String?
+}
+
 
 struct BuzzFeedbackModel: Encodable {
     let sessionId: String

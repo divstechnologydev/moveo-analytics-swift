@@ -139,52 +139,125 @@ extension MoveoOneHTTPClient {
             // Handle different response status codes for prediction requests
             switch response.statusCode {
             case 200...299:
-                guard let decodedResponse = try? JSONDecoder().decode(responseModel, from: data) else {
-                    return .failure(.decode)
+                // First try to decode as Dolphin API response format
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    // Transform Dolphin response to MoveoOnePredictionResponse
+                    let transformedResponse = MoveoOnePredictionResponse(
+                        success: true,
+                        status: "success",
+                        prediction_probability: dolphinResponse.prediction_probability,
+                        prediction_binary: dolphinResponse.prediction_binary,
+                        message: nil
+                    )
+                    return .success(transformedResponse as! T)
+                } else {
+                    // If it's not in Dolphin format, try the original response model
+                    guard let decodedResponse = try? JSONDecoder().decode(responseModel, from: data) else {
+                        return .failure(.decode)
+                    }
+                    return .success(decodedResponse)
                 }
-                return .success(decodedResponse)
             case 202:
                 // Model is loading or validating
+                var pendingMessage = "Model is loading, please try again"
+                
+                // Try to extract message from response
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    pendingMessage = dolphinResponse.message ?? pendingMessage
+                }
+                
                 let errorResponse = MoveoOnePredictionResponse(
                     success: false,
                     status: "pending",
-                    message: "Model is loading, please try again"
+                    message: pendingMessage
                 )
                 return .success(errorResponse as! T)
             case 404:
+                var errorMessage = "Model not found or not accessible"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
                 let errorResponse = MoveoOnePredictionResponse(
                     success: false,
                     status: "not_found",
-                    message: "Model not found or not accessible"
+                    message: errorMessage
                 )
                 return .success(errorResponse as! T)
             case 409:
+                var errorMessage = "Conditional event not found"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
                 let errorResponse = MoveoOnePredictionResponse(
                     success: false,
                     status: "conflict",
-                    message: "Conditional event not found"
+                    message: errorMessage
                 )
                 return .success(errorResponse as! T)
             case 422:
+                var errorMessage = "Invalid prediction data"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
                 let errorResponse = MoveoOnePredictionResponse(
                     success: false,
                     status: "invalid_data",
-                    message: "Invalid prediction data"
+                    message: errorMessage
                 )
                 return .success(errorResponse as! T)
             case 500:
+                var errorMessage = "Server error processing prediction request"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
                 let errorResponse = MoveoOnePredictionResponse(
                     success: false,
                     status: "server_error",
-                    message: "Server error processing prediction request"
+                    message: errorMessage
                 )
                 return .success(errorResponse as! T)
             case 400:
                 return .failure(.badRequest)
             case 401:
-                return .failure(.unauthorized)
+                var errorMessage = "Authentication token is invalid or expired"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "unauthorized",
+                    message: errorMessage
+                )
+                return .success(errorResponse as! T)
+            case 403:
+                var errorMessage = "Access denied to this model"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "forbidden",
+                    message: errorMessage
+                )
+                return .success(errorResponse as! T)
             default:
-                return .failure(.unexpectedStatusCode)
+                var errorMessage = "Unexpected server response"
+                if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
+                    errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                }
+                
+                let errorResponse = MoveoOnePredictionResponse(
+                    success: false,
+                    status: "server_error",
+                    message: errorMessage
+                )
+                return .success(errorResponse as! T)
             }
         } catch let urlError as URLError where urlError.code == .timedOut {
             let errorResponse = MoveoOnePredictionResponse(
