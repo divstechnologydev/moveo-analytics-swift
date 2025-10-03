@@ -9,7 +9,7 @@ import Foundation
 import Gzip
 import MultipartFormDataKit
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 15.0, *)
 protocol MoveoOneHTTPClient {
     func sendRequest<T: Decodable>(endpoint: MoveoOneEndpoint, responseModel: T.Type) async -> Result<T, MoveoOneRequestError>
     func sendPredictionRequest<T: Decodable>(endpoint: MoveoOneEndpoint, responseModel: T.Type) async -> Result<T, MoveoOneRequestError>

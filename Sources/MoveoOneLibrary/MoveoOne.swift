@@ -8,7 +8,7 @@
 import Foundation
 
 
-@available(iOS 15.0, macOS 12.0, *)
+@available(iOS 15.0, *)
 public final class MoveoOne: @unchecked Sendable {
     public static let instance: MoveoOne = MoveoOne()
     
@@ -246,7 +246,7 @@ public final class MoveoOne: @unchecked Sendable {
         }
     }
     
-    @available(iOS 15.0, macOS 12.0, *)
+    @available(iOS 15.0, *)
     private actor sendDataActor {
         func sendDataToServer(dataToSend: [MoveoOneEntity]) async {
             let result = await MoveoOneService.shared.storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest(events: dataToSend))
@@ -296,7 +296,7 @@ public final class MoveoOne: @unchecked Sendable {
     }
     
     
-    @available(iOS 15.0, macOS 12.0, *)
+    @available(iOS 15.0, *)
     public func predict(modelId: String) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
         // Validate modelId
         guard !modelId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
@@ -339,7 +339,7 @@ public final class MoveoOne: @unchecked Sendable {
         return await predicionActor.sendPredictionRequest(modelId: modelId.trimmingCharacters(in: .whitespacesAndNewlines), payload: predictionRequest)
     }
     
-    @available(iOS 15.0, macOS 12.0, *)
+    @available(iOS 15.0, *)
     private actor predictionActor {
         func sendPredictionRequest(modelId: String, payload: MoveoOnePredictionRequest) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
             return await MoveoOneService.shared.predict(modelId: modelId, payload: payload)
