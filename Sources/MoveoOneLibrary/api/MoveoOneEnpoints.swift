@@ -66,7 +66,7 @@ extension MoveoOneEnpoints: MoveoOneEndpoint {
     var host: String {
         switch self {
         case .predict, .predictionLatency:
-            return "dolphin-dev-978019819001.europe-west1.run.app"
+            return "dolphin-prod-229920351162.europe-west1.run.app"
         default:
             return "api.moveo.one"
         }

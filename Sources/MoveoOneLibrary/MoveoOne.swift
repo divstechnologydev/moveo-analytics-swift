@@ -383,7 +383,7 @@ public final class MoveoOne: @unchecked Sendable {
         let latencyRequest = MoveoOneLatencyRequest(
             model_id: modelId,
             session_id: sessionId,
-            client: "tag", // As specified in requirements
+            client: "swift", // Swift client identifier
             total_execution_time_ms: totalExecutionTimeMs,
             latency_data: [:] // Empty dict as specified
         )
