@@ -124,8 +124,8 @@ extension MoveoOneHTTPClient {
             request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
         }
         
-        // Set timeout for prediction requests (150ms as mentioned in JS implementation)
-        request.timeoutInterval = 0.15
+        // Set timeout for prediction requests (400ms)
+        request.timeoutInterval = 0.4
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request, delegate: nil)
@@ -263,7 +263,7 @@ extension MoveoOneHTTPClient {
             let errorResponse = MoveoOnePredictionResponse(
                 success: false,
                 status: "timeout",
-                message: "Request timed out after 150 milliseconds"
+                message: "Request timed out after 400 milliseconds"
             )
             return .success(errorResponse as! T)
         } catch {

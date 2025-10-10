@@ -638,14 +638,35 @@ MoveoOnePredictionResponse(
 MoveoOnePredictionResponse(
     success: false,
     status: "timeout",
-    message: "Request timed out after 150 milliseconds"
+    message: "Request timed out after 400 milliseconds"
 )
 ```
+
+### Latency Tracking
+
+The library automatically tracks prediction request latency when enabled (enabled by default). This feature measures the total execution time from when a prediction request is sent until the response is received, and sends this data to the Dolphin service for monitoring and analytics.
+
+#### Enable/Disable Latency Tracking
+
+```swift
+// Enable latency tracking (default behavior)
+MoveoOne.instance.calculateLatency(enabled: true)
+
+// Disable latency tracking
+MoveoOne.instance.calculateLatency(enabled: false)
+```
+
+#### How It Works
+
+- Latency tracking is **asynchronous** and **non-blocking** - it doesn't affect prediction response time
+- Timing is measured using high-precision timestamps (`CFAbsoluteTimeGetCurrent()`)
+- Latency data is sent to moveo endpoint after the prediction response is returned
+- Works for both successful predictions and timeout scenarios
 
 ### Important Notes
 
 - The `predict` method is **async** and **non-blocking** - it won't affect your app's UI performance
-- All requests have a 150-millisecond timeout to prevent hanging
+- All requests have a 400-millisecond timeout to prevent hanging
 - The method automatically uses the current session ID and sends all buffered events to the prediction service
 - Always check `success: true` for complete predictions 
 - Make sure to start MoveoOne with `start()` before calling `predict()`
