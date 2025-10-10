@@ -124,9 +124,9 @@ struct MoveoOneLatencyRequest: Codable {
     let session_id: String
     let client: String
     let total_execution_time_ms: Int
-    let latency_data: [String: Any]
+    let latency_data: [String: String]
     
-    init(model_id: String, session_id: String, client: String, total_execution_time_ms: Int, latency_data: [String: Any]) {
+    init(model_id: String, session_id: String, client: String, total_execution_time_ms: Int, latency_data: [String: String]) {
         self.model_id = model_id
         self.session_id = session_id
         self.client = client
