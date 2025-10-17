@@ -198,13 +198,24 @@ extension MoveoOneHTTPClient {
                 return .success(errorResponse as! T)
             case 422:
                 var errorMessage = "Invalid prediction data"
+                var errorStatus = "invalid_data"
+                
                 if let dolphinResponse = try? JSONDecoder().decode(DolphinPredictionResponse.self, from: data) {
                     errorMessage = dolphinResponse.detail ?? dolphinResponse.message ?? errorMessage
+                    
+                    // Check for TargetAlreadyReachedError specifically
+                    if let detail = dolphinResponse.detail, detail.contains("Completion target already reached") {
+                        errorStatus = "target_already_reached"
+                        errorMessage = "Completion target already reached - prediction not applicable"
+                    } else if let message = dolphinResponse.message, message.contains("Completion target already reached") {
+                        errorStatus = "target_already_reached"
+                        errorMessage = "Completion target already reached - prediction not applicable"
+                    }
                 }
                 
                 let errorResponse = MoveoOnePredictionResponse(
                     success: false,
-                    status: "invalid_data",
+                    status: errorStatus,
                     message: errorMessage
                 )
                 return .success(errorResponse as! T)

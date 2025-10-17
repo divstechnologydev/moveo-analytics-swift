@@ -607,6 +607,15 @@ MoveoOnePredictionResponse(
 )
 ```
 
+#### Target Already Reached Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "target_already_reached",
+    message: "Completion target already reached - prediction not applicable"
+)
+```
+
 #### Server Error
 ```swift
 MoveoOnePredictionResponse(
