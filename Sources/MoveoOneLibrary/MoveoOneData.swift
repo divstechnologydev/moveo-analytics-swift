@@ -16,7 +16,7 @@ public struct MoveoOneData {
     public let value: Any
     public let metadata: [String: String]?
     
-    public init(semanticGroup: String, id: String, type: Constants.MoveoOneType, action: Constants.MoveoOneAction, value: Any, metadata: [String : String]?) {
+    public init(semanticGroup: String, id: String, type: Constants.MoveoOneType, action: Constants.MoveoOneAction, value: Any, metadata: [String : String]? = nil) {
         self.semanticGroup = semanticGroup
         self.id = id
         self.type = type
