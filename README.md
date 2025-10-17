@@ -175,8 +175,7 @@ MoveoOne.instance.track(
         id: "payment_button",
         type: .button,
         action: .click,
-        value: "pay_now",
-        metadata: [:]
+        value: "pay_now"
     )
 )
 ```
@@ -193,8 +192,7 @@ MoveoOne.instance.tick(
         id: "text_view_1",
         type: .text,
         action: .view,
-        value: "welcome_message",
-        metadata: [:]
+        value: "welcome_message"
     )
 )
 ```
@@ -335,12 +333,7 @@ struct MainContentView: View {
                                         id: "main_title",
                                         type: .text,
                                         action: .appear,
-                                        value: "app_title",
-                                        metadata: [
-                                            "test": "a",
-                                            "locale": "eng",
-                                            "app_version": "2.1.0"
-                                        ]
+                                        value: "app_title"
                                     )
                                 )
                             }
@@ -369,8 +362,7 @@ struct MainContentView: View {
                                         id: "main_button",
                                         type: .button,
                                         action: .appear,
-                                        value: "Button One",
-                                        metadata: [:]
+                                        value: "Button One"
                                     )
                                 )
                             }
