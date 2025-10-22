@@ -8,6 +8,7 @@
 import Foundation
 
 
+@available(iOS 15.0, *)
 public final class MoveoOne: @unchecked Sendable {
     public static let instance: MoveoOne = MoveoOne()
     
@@ -23,6 +24,7 @@ public final class MoveoOne: @unchecked Sendable {
     private var sessionId: String = ""
     
     private var customPush = false
+    private var calculateLatency = true
     
     private let formatter = DateFormatter()
     
@@ -50,6 +52,10 @@ public final class MoveoOne: @unchecked Sendable {
     
     public func isCustomFlush() -> Bool {
         return self.customPush
+    }
+    
+    public func calculateLatency(enabled: Bool) {
+        self.calculateLatency = enabled
     }
     
     public func start(context: String, metadata: [String: String]?) {
@@ -245,6 +251,7 @@ public final class MoveoOne: @unchecked Sendable {
         }
     }
     
+    @available(iOS 15.0, *)
     private actor sendDataActor {
         func sendDataToServer(dataToSend: [MoveoOneEntity]) async {
             let result = await MoveoOneService.shared.storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest(events: dataToSend))
@@ -291,5 +298,111 @@ public final class MoveoOne: @unchecked Sendable {
     
     public func getContext() -> String {
         return self.context
+    }
+    
+    
+    @available(iOS 15.0, *)
+    public func predict(modelId: String) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
+        // Validate modelId
+        guard !modelId.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "invalid_model_id",
+                message: "Model ID is required and must be a non-empty string"
+            )
+            return .success(errorResponse)
+        }
+        
+        // Check if MoveoOne is started
+        guard self.started else {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "not_initialized",
+                message: "MoveoOne must be started before using predict method. Call start() first."
+            )
+            return .success(errorResponse)
+        }
+        
+        // Check if sessionId exists
+        guard !self.sessionId.isEmpty else {
+            let errorResponse = MoveoOnePredictionResponse(
+                success: false,
+                status: "no_session",
+                message: "No active session found. Please ensure MoveoOne is properly started."
+            )
+            return .success(errorResponse)
+        }
+        
+        // Create prediction request with current buffer events and session ID
+        let predictionRequest = MoveoOnePredictionRequest(
+            events: self.buffer,
+            session_id: self.sessionId
+        )
+        
+        // Record start time for latency calculation
+        let startTime = CFAbsoluteTimeGetCurrent()
+        
+        // Send prediction request asynchronously
+        let predicionActor = predictionActor()
+        let result = await predicionActor.sendPredictionRequest(modelId: modelId.trimmingCharacters(in: .whitespacesAndNewlines), payload: predictionRequest)
+        
+        // Calculate latency and send latency data asynchronously if enabled
+        if self.calculateLatency {
+            let endTime = CFAbsoluteTimeGetCurrent()
+            let totalExecutionTimeMs = Int((endTime - startTime) * 1000)
+            
+            // Send latency data asynchronously without blocking the response
+            Task {
+                await self.sendLatencyDataAsync(
+                    modelId: modelId.trimmingCharacters(in: .whitespacesAndNewlines),
+                    sessionId: self.sessionId,
+                    totalExecutionTimeMs: totalExecutionTimeMs,
+                    result: result
+                )
+            }
+        }
+        
+        return result
+    }
+    
+    @available(iOS 15.0, *)
+    private actor predictionActor {
+        func sendPredictionRequest(modelId: String, payload: MoveoOnePredictionRequest) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
+            return await MoveoOneService.shared.predict(modelId: modelId, payload: payload)
+        }
+    }
+    
+    @available(iOS 15.0, *)
+    private func sendLatencyDataAsync(
+        modelId: String,
+        sessionId: String,
+        totalExecutionTimeMs: Int,
+        result: Result<MoveoOnePredictionResponse, MoveoOneRequestError>
+    ) async {
+        // Create latency request
+        let latencyRequest = MoveoOneLatencyRequest(
+            model_id: modelId,
+            session_id: sessionId,
+            client: "swift", // Swift client identifier
+            total_execution_time_ms: totalExecutionTimeMs,
+            latency_data: [:] // Empty dict as specified
+        )
+        
+        // Send latency data asynchronously
+        let latencyActor = latencyActor()
+        await latencyActor.sendLatencyData(payload: latencyRequest)
+    }
+    
+    @available(iOS 15.0, *)
+    private actor latencyActor {
+        func sendLatencyData(payload: MoveoOneLatencyRequest) async {
+            let result = await MoveoOneService.shared.logPredictionLatency(payload: payload)
+            switch result {
+            case .success(let response):
+                MoveoOne.instance.log(msg: "Latency data sent successfully: \(response)")
+            case .failure(let error):
+                MoveoOne.instance.log(msg: "Failed to send latency data: \(error)")
+            }
+        }
     }
 }

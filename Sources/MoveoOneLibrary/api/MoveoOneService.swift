@@ -7,11 +7,15 @@
 
 import Foundation
 
+ @available(iOS 15.0, *)
 protocol MoveoOneServicable {
-    func storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest) async -> Result<SaveDataResponse, MoveoOneRequestError>
-    func storeAnalyticsSyncEvent(payload: MoveoOneAnalyticsRequest) async -> Result<MoveoOneAnalyticsResponse, MoveoOneRequestError>
-}
+     func storeAnalyticsEvent(payload: MoveoOneAnalyticsRequest) async -> Result<SaveDataResponse, MoveoOneRequestError>
+     func storeAnalyticsSyncEvent(payload: MoveoOneAnalyticsRequest) async -> Result<MoveoOneAnalyticsResponse, MoveoOneRequestError>
+     func predict(modelId: String, payload: MoveoOnePredictionRequest) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError>
+     func logPredictionLatency(payload: MoveoOneLatencyRequest) async -> Result<MoveoOneLatencyResponse, MoveoOneRequestError>
+ }
 
+@available(iOS 15.0, *)
 struct MoveoOneService: MoveoOneHTTPClient, MoveoOneServicable {
     static let shared = MoveoOneService()
     
@@ -21,5 +25,13 @@ struct MoveoOneService: MoveoOneHTTPClient, MoveoOneServicable {
     
     func storeAnalyticsSyncEvent(payload: MoveoOneAnalyticsRequest) async -> Result<MoveoOneAnalyticsResponse, MoveoOneRequestError> {
         return await sendRequest(endpoint: MoveoOneEnpoints.analyticsSyncEvent(parameters: payload.dictionary ?? [String: Any] ()), responseModel: MoveoOneAnalyticsResponse.self)
+    }
+    
+    func predict(modelId: String, payload: MoveoOnePredictionRequest) async -> Result<MoveoOnePredictionResponse, MoveoOneRequestError> {
+        return await sendPredictionRequest(endpoint: MoveoOneEnpoints.predict(modelId: modelId, parameters: payload.dictionary ?? [String: Any]()), responseModel: MoveoOnePredictionResponse.self)
+    }
+    
+    func logPredictionLatency(payload: MoveoOneLatencyRequest) async -> Result<MoveoOneLatencyResponse, MoveoOneRequestError> {
+        return await sendRequest(endpoint: MoveoOneEnpoints.predictionLatency(parameters: payload.dictionary ?? [String: Any]()), responseModel: MoveoOneLatencyResponse.self)
     }
 }

@@ -16,7 +16,7 @@ public struct MoveoOneData {
     public let value: Any
     public let metadata: [String: String]?
     
-    public init(semanticGroup: String, id: String, type: Constants.MoveoOneType, action: Constants.MoveoOneAction, value: Any, metadata: [String : String]?) {
+    public init(semanticGroup: String, id: String, type: Constants.MoveoOneType, action: Constants.MoveoOneAction, value: Any, metadata: [String : String]? = nil) {
         self.semanticGroup = semanticGroup
         self.id = id
         self.type = type
@@ -77,6 +77,36 @@ struct MoveoOnePrediction: Codable {
     var errorCode: String?
 }
 
+public struct MoveoOnePredictionResponse: Codable {
+    public let success: Bool
+    public let status: String
+    public let prediction_probability: Double?
+    public let prediction_binary: Bool?
+    public let message: String?
+    
+    public init(success: Bool, status: String, prediction_probability: Double? = nil, prediction_binary: Bool? = nil, message: String? = nil) {
+        self.success = success
+        self.status = status
+        self.prediction_probability = prediction_probability
+        self.prediction_binary = prediction_binary
+        self.message = message
+    }
+}
+
+struct MoveoOnePredictionRequest: Codable {
+    let events: [MoveoOneEntity]
+    let session_id: String
+}
+
+// Temporary struct to capture Dolphin API response format
+struct DolphinPredictionResponse: Codable {
+    let model_id: String?
+    let prediction_probability: Double?
+    let prediction_binary: Bool?
+    let message: String?
+    let detail: String?
+}
+
 
 struct BuzzFeedbackModel: Encodable {
     let sessionId: String
@@ -85,6 +115,33 @@ struct BuzzFeedbackModel: Encodable {
     init(sessionId: String, numberOfDrinks: Double) {
         self.sessionId = sessionId
         self.numberOfDrinks = numberOfDrinks
+    }
+}
+
+// Latency tracking models
+struct MoveoOneLatencyRequest: Codable {
+    let model_id: String
+    let session_id: String
+    let client: String
+    let total_execution_time_ms: Int
+    let latency_data: [String: String]
+    
+    init(model_id: String, session_id: String, client: String, total_execution_time_ms: Int, latency_data: [String: String]) {
+        self.model_id = model_id
+        self.session_id = session_id
+        self.client = client
+        self.total_execution_time_ms = total_execution_time_ms
+        self.latency_data = latency_data
+    }
+}
+
+struct MoveoOneLatencyResponse: Codable {
+    let success: Bool
+    let message: String?
+    
+    init(success: Bool, message: String? = nil) {
+        self.success = success
+        self.message = message
     }
 }
 
@@ -120,6 +177,26 @@ extension MoveoOnePrediction {
 }
 
 extension MoveoOneAnalyticsResponse {
+    func asDictionary() throws -> [String: Any] {
+      let data = try JSONEncoder().encode(self)
+      guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+        throw NSError()
+      }
+      return dictionary
+    }
+}
+
+extension MoveoOnePredictionRequest {
+    func asDictionary() throws -> [String: Any] {
+      let data = try JSONEncoder().encode(self)
+      guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {
+        throw NSError()
+      }
+      return dictionary
+    }
+}
+
+extension MoveoOneLatencyRequest {
     func asDictionary() throws -> [String: Any] {
       let data = try JSONEncoder().encode(self)
       guard let dictionary = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any] else {

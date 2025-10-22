@@ -8,6 +8,9 @@
 public struct Constants {
     
     public static let libVersion = "1.0.17"
+    
+    // Dolphin service URL for prediction requests
+    public static let dolphinURL = "https://dolphin-dev-978019819001.europe-west1.run.app"
 
     public enum Environment: String {
         case development

@@ -175,8 +175,7 @@ MoveoOne.instance.track(
         id: "payment_button",
         type: .button,
         action: .click,
-        value: "pay_now",
-        metadata: [:]
+        value: "pay_now"
     )
 )
 ```
@@ -193,8 +192,7 @@ MoveoOne.instance.tick(
         id: "text_view_1",
         type: .text,
         action: .view,
-        value: "welcome_message",
-        metadata: [:]
+        value: "welcome_message"
     )
 )
 ```
@@ -335,12 +333,7 @@ struct MainContentView: View {
                                         id: "main_title",
                                         type: .text,
                                         action: .appear,
-                                        value: "app_title",
-                                        metadata: [
-                                            "test": "a",
-                                            "locale": "eng",
-                                            "app_version": "2.1.0"
-                                        ]
+                                        value: "app_title"
                                     )
                                 )
                             }
@@ -369,8 +362,7 @@ struct MainContentView: View {
                                         id: "main_button",
                                         type: .button,
                                         action: .appear,
-                                        value: "Button One",
-                                        metadata: [:]
+                                        value: "Button One"
                                     )
                                 )
                             }
@@ -496,6 +488,189 @@ You can find your organization's API token in the [Moveo One App](https://app.mo
 Once your data is being tracked, you can access your analytics through [Moveo One Dashboard](https://app.moveo.one/). The dashboard provides comprehensive insights into user behavior, interaction patterns, and application performance.
 
 ## Support
+
+## Prediction API
+
+The MoveoOne library includes a prediction method that allows you to get real-time predictions from your trained models.
+
+### Basic Usage
+
+```swift
+// Initialize and start MoveoOne first
+MoveoOne.instance.initialize(token: "YOUR_TOKEN_HERE")
+MoveoOne.instance.start(context: "YOUR_CONTEXT", metadata: nil)
+
+// Get prediction from a model
+await MoveoOne.instance.predict(modelId: "your-model-id")
+```
+
+### Using Swift's Result Type
+
+The predict method returns a `Result<MoveoOnePredictionResponse, MoveoOneRequestError>`:
+
+```swift
+let result = await MoveoOne.instance.predict(modelId: "your-model-id")
+
+switch result {
+case .success(let response):
+    if response.success {
+        print("Prediction probability: \(response.prediction_probability ?? 0.0)")
+        print("Binary result: \(response.prediction_binary ?? false)")
+    } else {
+        print("Error: \(response.message ?? "Unknown error")")
+        print("Status: \(response.status)")
+    }
+case .failure(let error):
+    print("Network error: \(error)")
+}
+```
+
+### Using Async/Await with Do-Catch
+
+```swift
+do {
+    let result = await MoveoOne.instance.predict(modelId: "your-model-id")
+    switch result {
+    case .success(let response):
+        if response.success {
+            handlePrediction(response.prediction_probability)
+        } else {
+            handleError(response)
+        }
+    case .failure(let error):
+        handleNetworkError(error)
+    }
+} catch {
+    // Handle unexpected errors
+    print("Unexpected error: \(error)")
+}
+```
+
+### Response Examples
+
+### Success Response
+
+```swift
+MoveoOnePredictionResponse(
+    success: true,
+    status: "success",
+    prediction_probability: 0.85,
+    prediction_binary: true,
+    message: nil
+)
+```
+
+### Error Responses
+
+#### Not Initialized
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "not_initialized",
+    message: "MoveoOne must be started before using predict method. Call start() first."
+)
+```
+
+#### Invalid Model ID
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "invalid_model_id",
+    message: "Model ID is required and must be a non-empty string"
+)
+```
+
+#### Model Loading/Validating (Pending State)
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "pending",
+    message: "Model is loading, please try again"
+)
+```
+
+#### Model Not Found
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "not_found",
+    message: "Model not found or not accessible"
+)
+```
+
+#### Conflict Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "conflict",
+    message: "Conditional event not found"
+)
+```
+
+#### Target Already Reached Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "target_already_reached",
+    message: "Completion target already reached - prediction not applicable"
+)
+```
+
+#### Server Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "server_error",
+    message: "Server error processing prediction request"
+)
+```
+
+#### Network Error
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "network_error",
+    message: "Network error - please check your connection"
+)
+```
+
+#### Timeout
+```swift
+MoveoOnePredictionResponse(
+    success: false,
+    status: "timeout",
+    message: "Request timed out after 400 milliseconds"
+)
+```
+
+### Latency Tracking
+
+The library automatically tracks prediction request latency when enabled (enabled by default). This feature measures the total execution time from when a prediction request is sent until the response is received, and sends this data to the Dolphin service for monitoring and analytics.
+
+#### Enable/Disable Latency Tracking
+
+```swift
+// Enable latency tracking (default behavior)
+MoveoOne.instance.calculateLatency(enabled: true)
+
+// Disable latency tracking
+MoveoOne.instance.calculateLatency(enabled: false)
+```
+
+#### How It Works
+
+- Latency tracking is **asynchronous** and **non-blocking** - it doesn't affect prediction response time
+- Timing is measured using high-precision timestamps (`CFAbsoluteTimeGetCurrent()`)
+- Latency data is sent to moveo endpoint after the prediction response is returned
+- Works for both successful predictions and timeout scenarios
+
+### Important Notes
+
+- The `predict` method is **async** and **non-blocking** - it won't affect your app's UI performance
+- All requests have a 400-millisecond timeout to prevent hanging
+- The method automatically uses the current session ID and sends all buffered events to the prediction service
+- Always check `success: true` for complete predictions 
+- Make sure to start MoveoOne with `start()` before calling `predict()`
 
 For any issues or support, feel free to:
 
